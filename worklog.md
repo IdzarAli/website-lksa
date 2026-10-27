@@ -113,3 +113,21 @@ Stage Summary:
 - Label baru "Pengurus Panti" & "Usaha Panti" konsisten di header, footer, dan tiap halaman; teks rincian pendidikan & logo dev Next.js dihapus.
 - Responsivitas mobile terkonfirmasi: 6 halaman × 2 viewport (390/320) tanpa overflow horizontal, nav & footer rapi.
 - Desain tersimpan permanen di kode (Tailwind di JSX + token globals.css + font layout.tsx + foto public/images) — tidak akan hilang saat dijalankan/deploy, tanpa perlu ditambahkan ulang manual.
+
+---
+Task ID: 7
+Agent: Z.ai Code (utama)
+Task: Rebranding "LKSA Danukusumo" (hapus "/ PAYM"), hapus bagian "Alokasi penggunaan dana" + grafiknya, pastikan kode mudah dijalankan (portabilitas DB + skrip setup + README), siapkan saran hosting/database.
+
+Work Log:
+- Rebranding 6 lokasi: siteConfig.namaLembaga → "LKSA Danukusumo" (otomatis merambat header/footer/admin), metadata layout.tsx (title+description), h1 TentangView, komentar globals.css & prisma/schema.prisma. Grep final: nol sisa "PAYM" di src & prisma.
+- DataPantiView: hapus seluruh section "Alokasi penggunaan dana" (PieChart + tabel + catatan); bersihkan import recharts (Pie/PieChart/Cell/Legend), ikon PieIcon, konstanta WARNA, variabel alokasi/totalAlokasi, tipe `alokasi` di StatsItem & `persen` di Kelompok. Halaman kini: Usia → Pendidikan → Direktori pengasuh.
+- Portabilitas: .env DATABASE_URL dari path absolut → `file:../db/custom.db` (relatif terhadap prisma/, menunjuk file db yang sama — data utuh; `bun run db:push` terverifikasi in-sync).
+- package.json: rename paket → "lksa-danukusumo-website"; tambah skrip `setup` (prisma generate + db push + seed) dan `db:seed`.
+- README.md baru (panduan menjalankan): 3 langkah (install → setup → dev), tabel perintah, akun demo, struktur folder, checklist pra-produksi, catatan deploy singkat (Vercel + Supabase/Neon).
+- Verifikasi browser: judul tab & header "LKSA Danukusumo — Purworejo"; 6 halaman publik bebas "PAYM" & bebas "Alokasi penggunaan dana"; layout halaman data utuh; login verifikator → dashboard RUANG PENGURUS sukses; `bun run lint` bersih; dev.log tanpa error.
+
+Stage Summary:
+- Identitas situs kini konsisten "LKSA Danukusumo" di seluruh tampilan, metadata, dan komentar kode.
+- Halaman Pengurus Panti tampil tanpa bagian alokasi dana; kode recharts terpakai minimal (bar chart saja).
+- Proyek portabel: DB relatif, satu perintah `bun run setup`, README lengkap — bisa dijalankan siapa pun dengan `bun install && bun run setup && bun run dev`.

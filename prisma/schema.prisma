@@ -1,4 +1,4 @@
-// Schema LKSA / PAYM Danukusumo — prototipe (sesuai spesifikasi §6)
+// Schema LKSA Danukusumo (sesuai spesifikasi §6)
 // Kontrak model dijaga tetap agar mudah dipindah ke produksi (Django + PostgreSQL / Supabase).
 // Catatan SQLite: field "String" yang berisi JSON disimpan sebagai string JSON
 // (SQLite tidak punya tipe Json di Prisma; di PostgreSQL nanti bisa dipetakan ke JsonB).

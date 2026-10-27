@@ -1,5 +1,5 @@
 /**
- * Konfigurasi situs LKSA / PAYM Danukusumo.
+ * Konfigurasi situs LKSA Danukusumo.
  *
  * Semua nilai kontak, rekening, QRIS, WA, email, dan alamat di bawah ini
  * adalah nilai sementara milik lembaga — jangan pernah hardcode nilai ini
@@ -7,7 +7,7 @@
  */
 
 export const siteConfig = {
-  namaLembaga: "LKSA / PAYM Danukusumo",
+  namaLembaga: "LKSA Danukusumo",
   namaPendek: "Danukusumo",
   lokasi: "Purworejo, Jawa Tengah",
   tahunBerdiri: "2000",

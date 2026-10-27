@@ -9,7 +9,7 @@ export function TentangView() {
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Tentang Kami</p>
-      <h1 className="mt-2 text-3xl sm:text-4xl">Mengenal LKSA / PAYM Danukusumo</h1>
+      <h1 className="mt-2 text-3xl sm:text-4xl">Mengenal LKSA Danukusumo</h1>
 
       {/* ===== SEJARAH ===== */}
       <section className="mt-8" aria-labelledby="judul-sejarah">

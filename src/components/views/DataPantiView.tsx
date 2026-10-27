@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {
-  Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart,
+  Bar, BarChart, CartesianGrid,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { GraduationCap, HeartPulse, PieChart as PieIcon, Users } from "lucide-react";
+import { GraduationCap, HeartPulse, Users } from "lucide-react";
 
 /**
  * Pengurus Panti — halaman data agregat lembaga (PRD-013).
@@ -14,17 +14,14 @@ import { GraduationCap, HeartPulse, PieChart as PieIcon, Users } from "lucide-re
  * - Data dari InstitutionStats dengan periode & sumber, berlabel CONTOH (OD-01).
  * - Tanpa scroll horizontal di 320px (grafik responsif + tabel menyesuaikan).
  */
-interface Kelompok { label: string; jumlah?: number; persen?: number }
+interface Kelompok { label: string; jumlah?: number }
 interface StatsItem {
   periode?: string;
   sumber?: string;
   usiaAgregat?: { rincian?: Kelompok[] };
   pendidikanAgregat?: { total?: number; rincian?: Kelompok[] };
-  alokasi?: { rincian?: Kelompok[] };
 }
 interface StaffItem { id: string; nama: string; peran: string }
-
-const WARNA = ["#2C7A64", "#4F9B83", "#8FC4B2", "#C9A24B", "#6B7280"];
 
 export function DataPantiView() {
   const [stats, setStats] = useState<StatsItem | null>(null);
@@ -44,8 +41,6 @@ export function DataPantiView() {
   const usia = stats?.usiaAgregat?.rincian ?? [];
   const pendidikan = stats?.pendidikanAgregat?.rincian ?? [];
   const totalPendidikan = stats?.pendidikanAgregat?.total ?? pendidikan.reduce((a, b) => a + (b.jumlah ?? 0), 0);
-  const alokasi = stats?.alokasi?.rincian ?? [];
-  const totalAlokasi = alokasi.reduce((a, b) => a + (b.persen ?? 0), 0);
 
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -148,67 +143,6 @@ export function DataPantiView() {
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ALOKASI DANA ===== */}
-      <section className="mt-10" aria-labelledby="judul-alokasi">
-        <h2 id="judul-alokasi" className="flex items-center gap-2 text-2xl">
-          <PieIcon className="h-5 w-5 text-brand-600" aria-hidden />
-          Alokasi penggunaan dana
-        </h2>
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-xl border border-brand-100 bg-white p-4">
-            <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={alokasi}
-                    dataKey="persen"
-                    nameKey="label"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={95}
-                    label={({ label, persen }: { label?: string; persen?: number }) => `${label} ${persen}%`}
-                  >
-                    {alokasi.map((_, i) => (
-                      <Cell key={i} fill={WARNA[i % WARNA.length]} />
-                    ))}
-                  </Pie>
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Tooltip formatter={(v: number) => [`${v}%`, "Porsi"]} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div className="rounded-xl border border-brand-100 bg-white p-4">
-            <table className="w-full text-sm">
-              <caption className="sr-only">Tabel alokasi dana (angka sama dengan grafik)</caption>
-              <thead>
-                <tr className="border-b border-border text-left">
-                  <th scope="col" className="py-2 font-semibold">Pos penggunaan</th>
-                  <th scope="col" className="py-2 text-right font-semibold">Porsi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alokasi.map((k) => (
-                  <tr key={k.label} className="border-b border-border/60">
-                    <td className="py-2">{k.label}</td>
-                    <td className="py-2 text-right tabular-nums">{k.persen}%</td>
-                  </tr>
-                ))}
-                <tr className="font-semibold">
-                  <td className="py-2">Total</td>
-                  <td className="py-2 text-right tabular-nums">{totalAlokasi}%</td>
-                </tr>
-              </tbody>
-            </table>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Alokasi: {alokasi.map((k) => k.persen).join(" + ")} = {totalAlokasi}%. Rincian
-              nominal rupiah diterbitkan terpisah oleh pengurus.
-            </p>
           </div>
         </div>
       </section>
