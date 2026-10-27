@@ -68,6 +68,11 @@ async function main() {
       sumber: "Data internal lembaga",
       periode: "Tahun Ajaran 2025/2026",
     },
+    ringkasAlumni: {
+      nilai: "150+",
+      sumber: "Data internal lembaga",
+      periode: "Akumulasi sejak berdiri 2000",
+    },
     ringkasDonasi: {
       nilai: "34",
       sumber: "Data internal lembaga",

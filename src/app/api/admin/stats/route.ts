@@ -34,19 +34,25 @@ export async function POST(req: NextRequest) {
     if (!periode) return jsonGagal(400, "Periode wajib diisi", { errors: { periode: "Periode wajib diisi" } });
     if (!sumber) return jsonGagal(400, "Sumber data wajib diisi", { errors: { sumber: "Sumber data wajib diisi" } });
 
-    const validasiKelompok = (arr: unknown, key: string, namaPersen = false): { ok: true; nilai: string } | { ok: false; galat: string } => {
+    const validasiKelompok = (
+      arr: unknown,
+      key: string,
+      namaPersen = false
+    ): { ok: true; baris: { label: string; jumlah?: number; persen?: number }[]; total: number } | { ok: false; galat: string } => {
       if (!Array.isArray(arr) || arr.length === 0) return { ok: false, galat: `${key} wajib diisi minimal satu baris` };
+      const baris: { label: string; jumlah?: number; persen?: number }[] = [];
       let total = 0;
-      for (const baris of arr) {
-        const b = (baris ?? {}) as Record<string, unknown>;
+      for (const item of arr) {
+        const b = (item ?? {}) as Record<string, unknown>;
         const label = bersihkanTeks(b.label);
-        const angka = Number.parseInt(String(b[key === "usiaAgregat" ? "jumlah" : key === "pendidikanAgregat" ? "jumlah" : "persen"] ?? ""), 10);
+        const angka = Number.parseInt(String(b[key === "alokasi" ? "persen" : "jumlah"] ?? ""), 10);
         if (!label) return { ok: false, galat: `${key}: label wajib diisi` };
         if (!Number.isInteger(angka) || angka < 0) return { ok: false, galat: `${key}: angka harus bilangan bulat ≥ 0` };
+        baris.push(namaPersen ? { label, persen: angka } : { label, jumlah: angka });
         total += angka;
       }
       if (namaPersen && total !== 100) return { ok: false, galat: `alokasi: total persen harus tepat 100% (sekarang ${total}%)` };
-      return { ok: true, nilai: JSON.stringify(arr) };
+      return { ok: true, baris, total };
     };
 
     const usia = validasiKelompok(body.usiaAgregat, "usia");
@@ -60,9 +66,14 @@ export async function POST(req: NextRequest) {
       data: {
         periode,
         sumber,
-        usiaAgregat: usia.nilai,
-        pendidikanAgregat: pendidikan.nilai,
-        alokasi: alok.nilai,
+        // Bentuk objek konsisten dengan seed & pembacaan halaman publik
+        // (ringkasBeranda untuk kartu Beranda; rincian untuk grafik/tabel).
+        usiaAgregat: JSON.stringify({
+          ringkasBeranda: { nilai: String(usia.total), sumber, periode },
+          rincian: usia.baris,
+        }),
+        pendidikanAgregat: JSON.stringify({ total: pendidikan.total, rincian: pendidikan.baris }),
+        alokasi: JSON.stringify({ rincian: alok.baris }),
         approvedBy: null, // menunggu persetujuan pengurus (tampil tetap berlabel CONTOH)
       },
     });

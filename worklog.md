@@ -224,3 +224,20 @@ Work Log:
 
 Stage Summary:
 - Navigasi mobile kini drawer dinamis yang ringkas (header hanya 1 baris di mobile, bukan 2 baris menu), dengan animasi halus, aksesibilitas (aria-expanded/controls, Escape, fokus tetap di header), dan CTA donasi selalu tersedia di semua ukuran layar.
+
+---
+Task ID: 14
+Agent: Z.ai Code (main)
+Task: Hapus heading "Sekilas data lembaga" + deskripsinya; kartu statistik beranda responsif mobile dengan Anak binaan, Pengasuh Panti, Alumni, Tahun berdiri.
+
+Work Log:
+- BerandaView: hapus h2 "Sekilas data lembaga" dan teks "Angka berikut adalah data agregat…" (section kini langsung kartu, aria-label statistik ringkas).
+- 4 kartu baru: Anak binaan (dari ringkasBeranda stats, fallback jumlah rincian usia / "34"), Pengasuh Panti (jumlah profil tayang dari /api/staff, fallback "3"), Alumni (ringkasAlumni stats, fallback "150+"), Tahun berdiri (siteConfig.tahunBerdiri "2000" + subteks 15 Juli 2000).
+- Responsif: grid-cols-2 di mobile (2×2 semua kartu terlihat), lg:grid-cols-4 di desktop; padding/ukuran teks menyesuaikan (p-4 sm:p-5, angka text-2xl sm:text-3xl, label text-xs sm:text-sm).
+- seed.ts: tambah ringkasAlumni {nilai "150+"} pada usiaAgregat + re-seed DB.
+- Fix laten admin/stats POST: usiaAgregat/pendidikanAgregat/alokasi kini disimpan sebagai OBJEK konsisten dengan seed & pembacaan halaman publik ({ringkasBeranda:{nilai:total,sumber,periode}, rincian:[…]} / {total, rincian} / {rincian}) — sebelumnya array polos sehingga kartu Beranda & grafik DataPanti kosong setelah pengurus menyimpan statistik baru.
+- Verifikasi browser: judul & deskripsi lama hilang; 4 kartu tampil dengan nilai 34 / 3 / 150+ / 2000; mobile 390 px grid 2×2 tanpa overflow; desktop 4 kolom sejajar; API stats & staff OK; lint bersih.
+
+Stage Summary:
+- Bagian statistik beranda kini ringkas (tanpa heading) dan selalu menampilkan 4 angka kunci: Anak binaan, Pengasuh Panti, Alumni, Tahun berdiri — responsif 2×2 di mobile dan 1×4 di desktop.
+- Format penyimpanan statistik admin kini konsisten dengan seed sehingga data publik tidak rusak setelah update dari Ruang Pengurus.

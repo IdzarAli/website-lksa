@@ -1,22 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, BookOpenCheck, GraduationCap, HeartHandshake, Landmark, Users } from "lucide-react";
-import type { NavKey } from "@/config/site";
+import { ArrowRight, CalendarDays, GraduationCap, HeartHandshake, Users, UsersRound } from "lucide-react";
+import { siteConfig, type NavKey } from "@/config/site";
 
 /**
  * Beranda. Urutan konten: hero → statistik → profil → sambutan → berita →
  * program & kegiatan → CTA donasi. Statistik dibaca dari data InstitutionStats.
  */
-interface StatsAgregat {
-  ringkasBeranda?: { nilai?: string; sumber?: string; periode?: string };
-  ringkasDonasi?: { nilai?: string; sumber?: string; periode?: string };
-  rincian?: { label: string; jumlah: number }[];
-}
 interface StatItem {
   periode?: string;
   sumber?: string;
-  usiaAgregat?: StatsAgregat;
+  usiaAgregat?: {
+    ringkasBeranda?: { nilai?: string; sumber?: string; periode?: string };
+    ringkasAlumni?: { nilai?: string };
+    rincian?: { label: string; jumlah: number }[];
+  };
   pendidikanAgregat?: { total?: number; rincian?: { label: string; jumlah: number }[] };
   alokasi?: { rincian?: { label: string; persen: number }[] };
 }
@@ -30,6 +29,8 @@ interface ArtikelRingkas {
   publishedAt: string | null;
 }
 
+interface StaffItem { id: string }
+
 export function BerandaView({
   pindah,
   bukaBerita,
@@ -39,6 +40,7 @@ export function BerandaView({
 }) {
   const [stats, setStats] = useState<StatItem | null>(null);
   const [berita, setBerita] = useState<ArtikelRingkas[]>([]);
+  const [staff, setStaff] = useState<StaffItem[] | null>(null);
 
   useEffect(() => {
     fetch("/api/institution-stats")
@@ -49,11 +51,21 @@ export function BerandaView({
       .then((r) => r.json())
       .then((d) => setBerita((d.items ?? []).slice(0, 3)))
       .catch(() => setBerita([]));
+    fetch("/api/staff")
+      .then((r) => r.json())
+      .then((d) => setStaff(d.items ?? []))
+      .catch(() => setStaff(null));
   }, []);
 
-  const nilaiBeranda = stats?.usiaAgregat?.ringkasBeranda?.nilai ?? "35+";
-  const sumberBeranda = stats?.usiaAgregat?.ringkasBeranda?.sumber ?? "Data internal lembaga";
-  const periodeBeranda = stats?.usiaAgregat?.ringkasBeranda?.periode ?? "Tahun Ajaran 2025/2026";
+  // Nilai kartu ringkas: utamakan data, lalu jumlah rincian, terakhir nilai baku.
+  const rincianUsia = stats?.usiaAgregat?.rincian;
+  const nilaiAnak =
+    stats?.usiaAgregat?.ringkasBeranda?.nilai ??
+    (rincianUsia && rincianUsia.length > 0
+      ? String(rincianUsia.reduce((a, b) => a + (b.jumlah ?? 0), 0))
+      : "34");
+  const nilaiAlumni = stats?.usiaAgregat?.ringkasAlumni?.nilai ?? "150+";
+  const nilaiPengasuh = staff ? String(staff.length) : "3";
 
   return (
     <main id="konten">
@@ -102,53 +114,36 @@ export function BerandaView({
         </div>
       </section>
 
-      {/* ===== STATISTIK (dari data, berperiode & bersumber) ===== */}
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6" aria-labelledby="judul-statistik">
-        <h2 id="judul-statistik" className="text-2xl">Sekilas data lembaga</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Angka berikut adalah data agregat tanpa identitas individu anak, lengkap
-          dengan periode &amp; sumber yang tercantum.
-        </p>
-        <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-brand-100 bg-white p-5">
-            <dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Users className="h-4 w-4 text-brand-600" aria-hidden /> Anak binaan aktif
+      {/* ===== STATISTIK RINGKAS (dari data, tanpa identitas individu) ===== */}
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6" aria-label="Statistik ringkas lembaga">
+        <dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="rounded-xl border border-brand-100 bg-white p-4 sm:p-5">
+            <dt className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground sm:gap-2 sm:text-sm">
+              <Users className="h-4 w-4 shrink-0 text-brand-600" aria-hidden /> Anak binaan
             </dt>
-            <dd className="mt-2 font-display text-3xl text-brand-800">{nilaiBeranda}</dd>
-            <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Periode: {periodeBeranda} · Sumber: {sumberBeranda}
-            </dd>
+            <dd className="mt-2 font-display text-2xl text-brand-800 sm:text-3xl">{nilaiAnak}</dd>
+            <dd className="mt-1 text-[11px] leading-snug text-muted-foreground sm:text-xs">Anak aktif diasuh saat ini</dd>
           </div>
-          <div className="rounded-xl border border-brand-100 bg-white p-5">
-            <dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <GraduationCap className="h-4 w-4 text-brand-600" aria-hidden /> Pendidikan terdata
+          <div className="rounded-xl border border-brand-100 bg-white p-4 sm:p-5">
+            <dt className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground sm:gap-2 sm:text-sm">
+              <UsersRound className="h-4 w-4 shrink-0 text-brand-600" aria-hidden /> Pengasuh Panti
             </dt>
-            <dd className="mt-2 font-display text-3xl text-brand-800">
-              {stats?.pendidikanAgregat?.total ?? "34"}
-            </dd>
-            <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Periode: {stats?.periode ?? "Tahun Ajaran 2025/2026"} · Sumber: {stats?.sumber ?? "Data internal lembaga"}
-            </dd>
+            <dd className="mt-2 font-display text-2xl text-brand-800 sm:text-3xl">{nilaiPengasuh}</dd>
+            <dd className="mt-1 text-[11px] leading-snug text-muted-foreground sm:text-xs">Pengasuh &amp; pendamping harian</dd>
           </div>
-          <div className="rounded-xl border border-brand-100 bg-white p-5">
-            <dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <BookOpenCheck className="h-4 w-4 text-brand-600" aria-hidden /> Alokasi pendidikan
+          <div className="rounded-xl border border-brand-100 bg-white p-4 sm:p-5">
+            <dt className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground sm:gap-2 sm:text-sm">
+              <GraduationCap className="h-4 w-4 shrink-0 text-brand-600" aria-hidden /> Alumni
             </dt>
-            <dd className="mt-2 font-display text-3xl text-brand-800">
-              {stats?.alokasi?.rincian?.find((a) => a.label.toLowerCase().includes("pendidikan"))?.persen ?? 45}%
-            </dd>
-            <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Periode: {stats?.periode ?? "Tahun Ajaran 2025/2026"} · Sumber: {stats?.sumber ?? "Data internal lembaga"}
-            </dd>
+            <dd className="mt-2 font-display text-2xl text-brand-800 sm:text-3xl">{nilaiAlumni}</dd>
+            <dd className="mt-1 text-[11px] leading-snug text-muted-foreground sm:text-xs">Akumulasi sejak berdiri</dd>
           </div>
-          <div className="rounded-xl border border-brand-100 bg-white p-5">
-            <dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Landmark className="h-4 w-4 text-brand-600" aria-hidden /> Pengasuh berizin tayang
+          <div className="rounded-xl border border-brand-100 bg-white p-4 sm:p-5">
+            <dt className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground sm:gap-2 sm:text-sm">
+              <CalendarDays className="h-4 w-4 shrink-0 text-brand-600" aria-hidden /> Tahun berdiri
             </dt>
-            <dd className="mt-2 font-display text-3xl text-brand-800">3</dd>
-            <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Profil ditampilkan dengan persetujuan pemiliknya
-            </dd>
+            <dd className="mt-2 font-display text-2xl text-brand-800 sm:text-3xl">{siteConfig.tahunBerdiri}</dd>
+            <dd className="mt-1 text-[11px] leading-snug text-muted-foreground sm:text-xs">{siteConfig.tanggalBerdiri}</dd>
           </div>
         </dl>
         <button
