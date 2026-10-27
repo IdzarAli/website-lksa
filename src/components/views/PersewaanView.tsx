@@ -5,7 +5,7 @@ import { CheckCircle2, Armchair, CalendarDays, Info, MapPin, TentTree, Warehouse
 import { formatRupiah, hitungEstimasi, jumlahHariInklusif, HasilEstimasi } from "@/lib/pricing";
 
 /**
- * Usaha Panti/Persewaan (PRD-015, INV-2):
+ * Usaha Panti (PRD-015, INV-2):
  * - Katalog CONTOH dari API RentalItem (tarif CONTOH — TODO(OD-05))
  * - Form kondisional: Aula (kegiatan, peserta, jam; 1 hari = 1 sesi 8 jam),
  *   Kursi/tenda (unit, lokasi, hari). Ganti jenis → kolom jenis lain dikosongkan (PRD-022).
@@ -208,7 +208,7 @@ export function PersewaanView() {
 
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Usaha Panti / Persewaan</p>
+      <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Usaha Panti</p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Katalog sewa &amp; permohonan</h1>
       <p className="mt-3 flex max-w-3xl items-start gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm leading-relaxed text-body-text">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />

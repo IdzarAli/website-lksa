@@ -8,7 +8,7 @@ import {
 import { GraduationCap, HeartPulse, PieChart as PieIcon, Users } from "lucide-react";
 
 /**
- * Dashboard Informasi & Data Panti (PRD-013).
+ * Pengurus Panti — halaman data agregat lembaga (PRD-013).
  * - Hanya data AGREGAT (INV-3). Tanpa data individu anak.
  * - Setiap grafik: label angka + legenda + TABEL nonwarna; angka grafik = angka tabel.
  * - Data dari InstitutionStats dengan periode & sumber, berlabel CONTOH (OD-01).
@@ -50,7 +50,7 @@ export function DataPantiView() {
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
-        Dashboard Informasi &amp; Data Panti
+        Pengurus Panti
       </p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Data agregat lembaga</h1>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-body-text">
@@ -148,9 +148,6 @@ export function DataPantiView() {
                 </tr>
               </tbody>
             </table>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Rincian pendidikan: {pendidikan.map((k) => k.jumlah).join(" + ")} = {totalPendidikan}.
-            </p>
           </div>
         </div>
       </section>

@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  /* Matikan indikator dev Next.js (logo di pojok kiri bawah) */
+  devIndicators: false,
 };
 
 export default nextConfig;

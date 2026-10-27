@@ -93,3 +93,23 @@ Work Log:
 
 Stage Summary:
 - Footer navigasi tanpa underline; dua teks keterangan (catatan privasi footer + keterangan leaderboard) dihapus sesuai permintaan; tidak ada referensi/import menganggur tersisa.
+
+---
+Task ID: 6
+Agent: Z.ai Code (utama)
+Task: Ubah label navigasi & halaman ("Usaha Panti" saja; "Dashboard Informasi & Data Panti" → "Pengurus Panti"), hapus logo Next.js di kiri bawah, hapus teks "Rincian pendidikan: 34 + 56 + 45 + 15 = 150."; jawab pertanyaan responsivitas mobile & keberlanjutan desain.
+
+Work Log:
+- site.ts: label navigasi "data" → "Pengurus Panti", label "sewa" → "Usaha Panti" (otomatis ikut berubah di SiteHeader desktop & mobile 2 baris, SiteFooter, dan status aktif nav).
+- DataPantiView: eyebrow "Dashboard Informasi & Data Panti" → "Pengurus Panti" (+ komentar file); hapus paragraf "Rincian pendidikan: 34 + 56 + 45 + 15 = 150." (variabel totalPendidikan tetap terpakai di baris Total tabel).
+- BerandaView: tombol "Lihat Dashboard Informasi & Data Panti" → "Lihat Pengurus Panti".
+- PersewaanView: eyebrow "Usaha Panti / Persewaan" → "Usaha Panti" (+ komentar file).
+- next.config.ts: tambah `devIndicators: false` — logo/tombol dev tools Next.js di pojok kiri bawah tidak tampil lagi (verifikasi: bounding rect 0x0, screenshot kiri bawah bersih); dev server di-restart agar konfigurasi berlaku.
+- QA responsivitas mobile (agent-browser): viewport 390×844 dan 320×568, keenam halaman (beranda/tentang/informasi/data/donasi/sewa) scrollWidth === innerWidth (NOL scroll horizontal); nav mobile 2 baris 3×2 dengan label baru; footer sticky menempel bawah; screenshot visual beranda/data/sewa/footer bersih.
+- Catatan: Task 5 (hapus underline nav footer + 2 teks privasi) ternyata sudah tuntas dan tercatat di entri sebelumnya; diverifikasi ulang — footer tanpa underline, teks tidak ada di codebase.
+- `bun run lint` bersih; dev.log hanya request 200 tanpa error runtime; grep final: nol sisa "Dashboard Informasi"/"Usaha Panti/Persewaan"/"Rincian pendidikan".
+
+Stage Summary:
+- Label baru "Pengurus Panti" & "Usaha Panti" konsisten di header, footer, dan tiap halaman; teks rincian pendidikan & logo dev Next.js dihapus.
+- Responsivitas mobile terkonfirmasi: 6 halaman × 2 viewport (390/320) tanpa overflow horizontal, nav & footer rapi.
+- Desain tersimpan permanen di kode (Tailwind di JSX + token globals.css + font layout.tsx + foto public/images) — tidak akan hilang saat dijalankan/deploy, tanpa perlu ditambahkan ulang manual.

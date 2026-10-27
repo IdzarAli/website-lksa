@@ -153,7 +153,7 @@ export function BerandaView({
           onClick={() => pindah("data")}
           className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 underline-offset-4 hover:underline"
         >
-          Lihat Dashboard Informasi &amp; Data Panti
+          Lihat Pengurus Panti
           <ArrowRight className="h-4 w-4" aria-hidden />
         </button>
       </section>

@@ -57,9 +57,9 @@ export const siteConfig = {
     { key: "beranda", label: "Beranda" },
     { key: "tentang", label: "Tentang Kami" },
     { key: "informasi", label: "Informasi & Publikasi" },
-    { key: "data", label: "Dashboard Informasi & Data Panti" },
+    { key: "data", label: "Pengurus Panti" },
     { key: "donasi", label: "Donasi" },
-    { key: "sewa", label: "Usaha Panti/Persewaan" },
+    { key: "sewa", label: "Usaha Panti" },
   ] as const,
 } as const;
 
