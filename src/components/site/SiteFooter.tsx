@@ -100,9 +100,7 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-gray-400 sm:px-6">
-          © {new Date().getFullYear()} {siteConfig.namaResmi}. Donasi diproses
-          dengan verifikasi manual di luar website; situs ini tidak menerima pembayaran
-          langsung dan tidak mengunci jadwal persewaan.
+          © {new Date().getFullYear()} {siteConfig.copyright}
         </div>
       </div>
     </footer>

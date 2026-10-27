@@ -183,3 +183,16 @@ Work Log:
 Stage Summary:
 - Logo resmi LKSA PAYM Danukusumo kini menjadi identitas visual situs: header, footer, halaman Tentang, login admin, dan favicon tab browser.
 - Aset teroptimasi (3,7 MB → 94 KB) tanpa kehilangan kualitas tampilan pada ukuran render maksimal 96 px.
+
+---
+Task ID: 11
+Agent: Z.ai Code (main)
+Task: Sederhanakan teks copyright footer menjadi "© 2026 LKSA PAYM Danukusumo".
+
+Work Log:
+- siteConfig: tambah field `copyright: "LKSA PAYM Danukusumo"` (nama tetap terpusat di config, tidak hardcode di komponen).
+- SiteFooter: baris copyright panjang (nama resmi + disclaimer verifikasi manual) diganti `© {tahun} {siteConfig.copyright}` sesuai permintaan pengguna.
+- Verifikasi browser: footer kini tampil "© 2026 LKSA PAYM Danukusumo"; tanpa overflow; lint bersih.
+
+Stage Summary:
+- Copyright footer ringkas sesuai permintaan; kalimat disclaimer verifikasi manual dihapus dari footer (informasi verifikasi tetap ada di halaman Donasi).

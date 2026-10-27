@@ -11,6 +11,7 @@ export const siteConfig = {
   namaResmi:
     "Lembaga Kesejahteraan Sosial Anak Panti Asuhan Yatim Muhammadiyah (LKSA PAYM) Danukusumo",
   namaPendek: "Danukusumo",
+  copyright: "LKSA PAYM Danukusumo",
   lokasi: "Banyuurip, Purworejo, Jawa Tengah",
   motto: "Berbakti Meraih Ridho Ilahi",
   tahunBerdiri: "2000",
