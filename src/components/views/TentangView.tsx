@@ -2,6 +2,7 @@
 
 import { Eye, History, Quote, ScrollText, Target } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { LogoMark } from "@/components/site/LogoMark";
 
 /**
  * Tentang Kami. Urutan konten: profil resmi + motto → sejarah → visi-misi →
@@ -10,11 +11,16 @@ import { siteConfig } from "@/config/site";
 export function TentangView() {
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Tentang Kami</p>
-      <h1 className="mt-2 text-3xl sm:text-4xl">Mengenal LKSA Danukusumo</h1>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-body-text">
-        {siteConfig.namaResmi} — Banyuurip, Purworejo.
-      </p>
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+        <LogoMark className="h-24 w-24 shrink-0" />
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Tentang Kami</p>
+          <h1 className="mt-2 text-3xl sm:text-4xl">Mengenal LKSA Danukusumo</h1>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-body-text">
+            {siteConfig.namaResmi} — Banyuurip, Purworejo.
+          </p>
+        </div>
+      </div>
 
       {/* ===== MOTTO ===== */}
       <div className="mt-6 flex items-start gap-3 rounded-xl border border-brand-200 bg-brand-50 p-5">

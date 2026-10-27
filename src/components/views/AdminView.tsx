@@ -6,6 +6,7 @@ import {
   Table2, UserCog, Users, Wrench, Download, XCircle, CheckCircle2, ImageIcon,
 } from "lucide-react";
 import { StatusBadge } from "@/components/site/StatusBadge";
+import { LogoMark } from "@/components/site/LogoMark";
 import { formatRupiah, formatTanggal } from "@/lib/pricing";
 
 /**
@@ -209,10 +210,13 @@ function FormulirLogin({ padaSukses, kembali }: { padaSukses: (s: Sesi) => void;
   return (
     <main id="konten" className="mx-auto max-w-md px-4 py-16 sm:px-6">
       <div className="rounded-2xl border border-brand-100 bg-white p-6">
-        <h1 className="flex items-center gap-2 text-2xl">
-          <Lock className="h-5 w-5 text-brand-600" aria-hidden />
-          Masuk Ruang Pengurus
-        </h1>
+        <div className="flex flex-col items-center text-center">
+          <LogoMark className="h-20 w-20" />
+          <h1 className="mt-3 flex items-center gap-2 text-2xl">
+            <Lock className="h-5 w-5 text-brand-600" aria-hidden />
+            Masuk Ruang Pengurus
+          </h1>
+        </div>
         <p className="mt-2 text-sm text-muted-foreground">
           Untuk petugas lembaga. Peran menentukan menu yang tersedia.
         </p>

@@ -15,7 +15,10 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-3">
-            <LogoMark className="h-9 w-9" />
+            {/* Latar putih agar logo kontras di atas footer gelap */}
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white p-1">
+              <LogoMark className="h-9 w-9" />
+            </span>
             <span className="font-display text-lg">{siteConfig.namaLembaga}</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-gray-300">

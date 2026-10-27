@@ -1,18 +1,19 @@
-/** Tanda lembaga sederhana (SVG inline) — bukan logo resmi, placeholder sampai aset sah. */
+import Image from "next/image";
+
+/**
+ * Logo resmi LKSA PAYM Danukusumo (aset: public/images/logo-danukusumo.png).
+ * Render dekoratif (alt kosong) karena nama lembaga selalu tampil
+ * sebagai teks di samping logo — aman untuk pembaca layar.
+ */
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 40 40"
-      role="img"
-      aria-label="Tanda lembaga Danukusumo (placeholder)"
-      className={className}
-      focusable="false"
-    >
-      <rect x="1" y="1" width="38" height="38" rx="10" fill="#2C7A64" />
-      <path
-        d="M20 9 L31 19 H27 V29 H22 V23 H18 V29 H13 V19 H9 Z"
-        fill="#FFFFFF"
-      />
-    </svg>
+    <Image
+      src="/images/logo-danukusumo.png"
+      alt=""
+      width={512}
+      height={512}
+      aria-hidden
+      className={`rounded-full object-contain ${className ?? ""}`}
+    />
   );
 }

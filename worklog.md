@@ -166,3 +166,20 @@ Stage Summary:
 - Seluruh identitas & data lembaga kini memakai data RESMI dari pengguna: nama resmi lengkap di Tentang/footer/copyright (brand pendek "LKSA Danukusumo" tetap di header), motto, visi-misi asli, sejarah, alamat, kontak, sosmed, dan rekening BRI.
 - Semua tautan kontak berfungsi (mailto, wa.me, IG, YT); QRIS placeholder dihapus; angka statistik konsisten 34 anak binaan.
 - Rincian distribusi usia/jenjang di halaman Pengurus Panti adalah penempatan awal yang bisa dikoreksi pengurus lewat dashboard (Statistik).
+
+---
+Task ID: 10
+Agent: Z.ai Code (main)
+Task: Tambahkan logo resmi panti (upload/Mapping panti.png) ke seluruh website.
+
+Work Log:
+- Logo asli 1980×1978 px / 3,7 MB dikompresi dengan sharp → public/images/logo-danukusumo.png (512 px, 94 KB) untuk tampilan web.
+- Favicon: salin versi 256 px ke src/app/icon.png (konvensi App Router) → otomatis tersaji di /icon.png + link rel icon (diverifikasi 200 image/png).
+- LogoMark.tsx ditulis ulang: placeholder SVG rumah diganti next/image logo resmi (alt kosong + aria-hidden karena nama lembaga selalu tampil sebagai teks di sebelahnya; rounded-full object-contain).
+- Logo kini tampil di: SiteHeader (40 px), SiteFooter, halaman Tentang Kami (96 px, sejajar judul profil), dan kartu login Ruang Pengurus (80 px).
+- SiteFooter: logo diberi latar putih bulat (h-11 rounded-full bg-white p-1) agar kontras di atas footer gelap #21262C.
+- Verifikasi browser: logo termuat di header/footer/tentang/login (naturalWidth > 0); favicon aktif; mobile 390 px & 320 px tanpa overflow horizontal; console bersih tanpa error; bun run lint bersih.
+
+Stage Summary:
+- Logo resmi LKSA PAYM Danukusumo kini menjadi identitas visual situs: header, footer, halaman Tentang, login admin, dan favicon tab browser.
+- Aset teroptimasi (3,7 MB → 94 KB) tanpa kehilangan kualitas tampilan pada ukuran render maksimal 96 px.
