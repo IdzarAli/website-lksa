@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 
 /**
  * Informasi & Publikasi (PRD-012) + Detail berita (PRD-016).
- * Filter (pencarian + kategori + halaman) HIDUP di komponen ini, sehingga
+ * Filter (pencarian + tahun publikasi + halaman) HIDUP di komponen ini, sehingga
  * tombol "Kembali ke daftar" dari detail menjaga filter/halaman (PRD-016).
  */
 interface ArtikelList {
@@ -49,9 +49,9 @@ export function InformasiView({
 }) {
   // ===== state daftar (dipertahankan saat melihat detail) =====
   const [q, setQ] = useState("");
-  const [kategori, setKategori] = useState("");
+  const [tahun, setTahun] = useState("");
   const [halaman, setHalaman] = useState(1);
-  const [data, setData] = useState<{ items: ArtikelList[]; total: number; totalPages: number; categories: string[] } | null>(null);
+  const [data, setData] = useState<{ items: ArtikelList[]; total: number; totalPages: number; years: string[] } | null>(null);
   const [memuat, setMemuat] = useState(true);
   const [pengumuman, setPengumuman] = useState<Pengumuman[]>([]);
 
@@ -68,7 +68,7 @@ export function InformasiView({
     let aktif = true;
     const params = new URLSearchParams({ page: String(halaman) });
     if (q) params.set("q", q);
-    if (kategori) params.set("category", kategori);
+    if (tahun) params.set("year", tahun);
     fetch(`/api/articles?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {
@@ -83,7 +83,7 @@ export function InformasiView({
     return () => {
       aktif = false;
     };
-  }, [slug, q, kategori, halaman]);
+  }, [slug, q, tahun, halaman]);
 
   // muat pengumuman sekali
   useEffect(() => {
@@ -128,15 +128,15 @@ export function InformasiView({
     setMemuat(true);
   };
 
-  const gantiKategori = (nilai: string) => {
-    setKategori(nilai);
-    setHalaman(1); // PRD-012: ganti kategori → halaman 1
+  const gantiTahun = (nilai: string) => {
+    setTahun(nilai);
+    setHalaman(1); // ganti filter tahun → halaman 1
     setMemuat(true);
   };
 
   const bersihkanFilter = () => {
     setQ("");
-    setKategori("");
+    setTahun("");
     setHalaman(1);
     setMemuat(true);
   };
@@ -230,7 +230,7 @@ export function InformasiView({
       </p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Kabar, kegiatan, dan pengumuman</h1>
 
-      {/* pencarian + kategori (bisa digabung) */}
+      {/* pencarian + filter tahun publikasi (bisa digabung) */}
       <form
         className="mt-6 flex flex-col gap-3 rounded-xl border border-brand-100 bg-white p-4 sm:flex-row sm:items-end"
         onSubmit={(e) => e.preventDefault()}
@@ -254,24 +254,24 @@ export function InformasiView({
           </div>
         </div>
         <div className="sm:w-64">
-          <label htmlFor="kategori-informasi" className="mb-1 block text-sm font-semibold">
-            Kategori
+          <label htmlFor="tahun-informasi" className="mb-1 block text-sm font-semibold">
+            Tahun publikasi
           </label>
           <select
-            id="kategori-informasi"
-            value={kategori}
-            onChange={(e) => gantiKategori(e.target.value)}
+            id="tahun-informasi"
+            value={tahun}
+            onChange={(e) => gantiTahun(e.target.value)}
             className="w-full rounded-lg border border-input bg-white px-3 py-2.5 text-sm focus-visible:outline-none"
           >
-            <option value="">Semua kategori</option>
-            {(data?.categories ?? []).map((k) => (
-              <option key={k} value={k}>
-                {k}
+            <option value="">Semua tahun</option>
+            {(data?.years ?? []).map((t) => (
+              <option key={t} value={t}>
+                {t}
               </option>
             ))}
           </select>
         </div>
-        {(q || kategori) && (
+        {(q || tahun) && (
           <button
             type="button"
             onClick={bersihkanFilter}
@@ -298,7 +298,7 @@ export function InformasiView({
               className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
             >
               <XCircle className="h-4 w-4" aria-hidden />
-              Hapus filter pencarian
+              Hapus filter pencarian dan tahun
             </button>
           </div>
         )}
@@ -308,7 +308,7 @@ export function InformasiView({
             <p className="text-xs text-muted-foreground">
               {data.total} berita ditemukan
               {q ? ` untuk “${q}”` : ""}
-              {kategori ? ` dalam kategori ${kategori}` : ""}
+              {tahun ? ` pada tahun ${tahun}` : ""}
             </p>
             <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {data.items.map((a) => (

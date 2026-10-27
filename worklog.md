@@ -131,3 +131,19 @@ Stage Summary:
 - Identitas situs kini konsisten "LKSA Danukusumo" di seluruh tampilan, metadata, dan komentar kode.
 - Halaman Pengurus Panti tampil tanpa bagian alokasi dana; kode recharts terpakai minimal (bar chart saja).
 - Proyek portabel: DB relatif, satu perintah `bun run setup`, README lengkap — bisa dijalankan siapa pun dengan `bun install && bun run setup && bun run dev`.
+
+---
+Task ID: 8
+Agent: Z.ai Code (utama)
+Task: Halaman Informasi & Publikasi — ganti filter kategori dengan filter tahun publikasi.
+
+Work Log:
+- API /api/articles: param `category` diganti `year` (regex ^\d{4}$); filter publishedAt dengan batas tahun zona WIB (gte 1 Jan +07:00, lt 1 Jan tahun berikut +07:00); respons `categories` → `years` (daftar tahun unik artikel terbit, urut menurun, dihitung dari publishedAt +7 jam).
+- InformasiView: state kategori → tahun; dropdown "Kategori" → "Tahun publikasi" (opsi "Semua tahun" + tahun tersedia); teks hasil "dalam kategori X" → "pada tahun X"; tombol kosong → "Hapus filter pencarian dan tahun"; perilaku ganti filter → halaman 1 tetap; badge kategori pada kartu & detail TETAP ditampilkan (hanya filter yang diganti, sesuai permintaan).
+- prisma/seed.ts: 2 artikel terbit dipindah ke 2025 (Pembagian Perlengkapan → 2025-07-14, Kelas Mengaji Ramadhan → 2025-03-01) agar filter tahun bisa didemokan lintas tahun; 3 isi berita yang masih menyebut "Dashboard Informasi & Data Panti" diperbarui ke "Pengurus Panti"; re-seed db.
+- Verifikasi curl: semua=4 berita (years ['2026','2025']); year=2025 → 2; year=2026 → 2; q=mengaji&year=2025 → 1 (kombinasi OK).
+- Verifikasi browser: dropdown menampilkan Semua tahun/2026/2025; pilih 2025 → "2 berita ditemukan pada tahun 2025" dengan 2 kartu benar; Hapus filter → 4 kembali; buka detail & "Kembali ke daftar" → filter tetap terjaga; detail berita memuat teks "Pengurus Panti" (tanpa nama lama); mobile 390px tanpa overflow, form tersusun vertikal rapi; `bun run lint` bersih; dev.log tanpa error.
+
+Stage Summary:
+- Filter Informasi & Publikasi kini berbasis TAHUN PUBLIKASI (pengganti kategori), bekerja di sisi server (where Prisma), bisa digabung dengan pencarian kata kunci, dan filter tetap terjaga saat kembali dari detail berita.
+- Data demo kini mencakup publikasi 2025 & 2026; seluruh teks berita konsisten memakai nama halaman "Pengurus Panti".

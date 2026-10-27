@@ -3,15 +3,17 @@ import { db } from "@/lib/db";
 import { amankan, jsonOk } from "@/lib/api";
 
 /**
- * GET /api/articles?q=&category=&page=  (PRD-012)
- * Hanya artikel berstatus "terbit" (INV-6). Kueri + kategori bisa digabung.
+ * GET /api/articles?q=&year=&page=  (PRD-012)
+ * Hanya artikel berstatus "terbit" (INV-6). Kueri + filter tahun publikasi bisa digabung.
+ * Tahun ditafsirkan dalam zona WIB (UTC+7) — cocok dengan lokasi lembaga.
  * Proyeksi publik: tanpa isi penuh.
  */
 export async function GET(req: NextRequest) {
   return amankan(async () => {
     const sp = req.nextUrl.searchParams;
     const q = (sp.get("q") ?? "").trim().slice(0, 100);
-    const kategori = (sp.get("category") ?? "").trim().slice(0, 60);
+    const tahunStr = (sp.get("year") ?? "").trim();
+    const tahun = /^\d{4}$/.test(tahunStr) ? Number.parseInt(tahunStr, 10) : null;
     const halaman = Math.max(1, Math.min(1000, Number.parseInt(sp.get("page") ?? "1", 10) || 1));
     const ukuran = 6;
 
@@ -22,7 +24,12 @@ export async function GET(req: NextRequest) {
         { ringkasan: { contains: q } },
         { isi: { contains: q } },
       ] } : {}),
-      ...(kategori ? { kategori } : {}),
+      ...(tahun ? {
+        publishedAt: {
+          gte: new Date(`${tahun}-01-01T00:00:00+07:00`),
+          lt: new Date(`${tahun + 1}-01-01T00:00:00+07:00`),
+        },
+      } : {}),
     };
 
     const [items, total] = await Promise.all([
@@ -46,12 +53,16 @@ export async function GET(req: NextRequest) {
       db.article.count({ where }),
     ]);
 
-    const kategoriTersedia = await db.article.findMany({
-      where: { status: "terbit" },
-      select: { kategori: true },
-      distinct: ["kategori"],
-      orderBy: { kategori: "asc" },
+    // Daftar tahun publikasi yang tersedia (unik, urut menurun)
+    const semuaTerbit = await db.article.findMany({
+      where: { status: "terbit", publishedAt: { not: null } },
+      select: { publishedAt: true },
     });
+    const tahunTersedia = [...new Set(
+      semuaTerbit
+        .map((a) => a.publishedAt as Date)
+        .map((d) => new Date(d.getTime() + 7 * 60 * 60 * 1000).getUTCFullYear()),
+    )].sort((a, b) => b - a);
 
     return jsonOk({
       items,
@@ -59,7 +70,7 @@ export async function GET(req: NextRequest) {
       page: halaman,
       pageSize: ukuran,
       totalPages: Math.max(1, Math.ceil(total / ukuran)),
-      categories: kategoriTersedia.map((k) => k.kategori),
+      years: tahunTersedia.map(String),
     });
   });
 }
