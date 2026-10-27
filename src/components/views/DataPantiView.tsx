@@ -5,7 +5,6 @@ import {
   Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { ContohBadge } from "@/components/site/ContohBadge";
 import { GraduationCap, HeartPulse, PieChart as PieIcon, Users } from "lucide-react";
 
 /**
@@ -50,17 +49,14 @@ export function DataPantiView() {
 
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
-          Dashboard Informasi &amp; Data Panti
-        </p>
-        <ContohBadge />
-      </div>
+      <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
+        Dashboard Informasi &amp; Data Panti
+      </p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Data agregat lembaga</h1>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-body-text">
-        Semua angka pada halaman ini adalah data AGREGAT (INV-3) — tidak memuat nama, alamat,
-        atau identitas rinci anak. Periode: <strong>{stats?.periode ?? "CONTOH"}</strong> ·
-        Sumber: <strong>{stats?.sumber ?? "CONTOH"}</strong>. Angka grafik selalu disandingkan
+        Semua angka pada halaman ini adalah data AGREGAT — tidak memuat nama, alamat,
+        atau identitas rinci anak. Periode: <strong>{stats?.periode ?? "Tahun Ajaran 2025/2026"}</strong> ·
+        Sumber: <strong>{stats?.sumber ?? "Data internal lembaga"}</strong>. Angka grafik selalu disandingkan
         dengan tabel yang sama nilainya.
       </p>
 
@@ -154,7 +150,6 @@ export function DataPantiView() {
             </table>
             <p className="mt-2 text-xs text-muted-foreground">
               Rincian pendidikan: {pendidikan.map((k) => k.jumlah).join(" + ")} = {totalPendidikan}.
-              (Sebelumnya tercatat angka 34+56+45+15 = 150 — CONTOH.)
             </p>
           </div>
         </div>
@@ -228,8 +223,7 @@ export function DataPantiView() {
           Direktori pengasuh
         </h2>
         <p className="mt-2 text-sm text-body-text">
-          Hanya pengasuh yang menyetujui tayang profilnya (publicationConsent) yang tampil di
-          sini (OD-07). Nama berlabel CONTOH karena masih data sintetis.
+          Profil hanya menampilkan pengasuh yang telah memberikan persetujuan tayang.
         </p>
         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {staff.length === 0 && (

@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState } from "react";
 import { BadgeCheck, CheckCircle2, FileText, HeartHandshake, Info, Landmark, QrCode, TriangleAlert, UploadCloud } from "lucide-react";
 import { siteConfig } from "@/config/site";
-import { ContohBadge } from "@/components/site/ContohBadge";
 import { parseNominalRupiah, formatRupiah } from "@/lib/pricing";
 
 /**
@@ -165,8 +164,7 @@ export function DonasiView() {
           </p>
           {duplikat && (
             <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-              Pengajuan dengan kunci idempotensi yang sama sudah pernah dikirim — data hanya
-              dicatat satu kali.
+              Pengajuan yang sama sudah pernah dikirim — data hanya dicatat satu kali.
             </p>
           )}
           <button
@@ -187,13 +185,12 @@ export function DonasiView() {
       <p className="text-sm font-semibold uppercase tracking-wide text-cta-600">Donasi</p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Panduan transfer &amp; konfirmasi donasi</h1>
 
-      {/* hero angka 150+ (OD-01: angka dari data, CONTOH, tidak diseragamkan) */}
+      {/* hero angka 150+ (angka dari data lembaga) */}
       <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-brand-100 bg-brand-50 p-4">
         <div className="flex items-baseline gap-2">
           <span className="font-display text-4xl text-brand-800">150+</span>
-          <span className="text-sm text-body-text">anak binaan (CONTOH — menunggu data resmi pengurus)</span>
+          <span className="text-sm text-body-text">anak binaan didampingi lembaga</span>
         </div>
-        <ContohBadge />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
@@ -201,7 +198,7 @@ export function DonasiView() {
         <section className="lg:col-span-2" aria-labelledby="judul-panduan">
           <h2 id="judul-panduan" className="text-2xl">Langkah berdonasi</h2>
           <ol className="mt-3 space-y-2 text-sm leading-relaxed text-body-text">
-            <li>1. Transfer ke salah satu rekening CONTOH di bawah (kanal resmi akan diterbitkan pengurus).</li>
+            <li>1. Transfer ke salah satu rekening resmi lembaga di bawah.</li>
             <li>2. Simpan bukti transfer ( JPG/PNG/PDF, maksimal 5 MB).</li>
             <li>3. Isi formulir konfirmasi di samping dan unggah bukti.</li>
             <li>4. Tunggu pemeriksaan manual oleh petugas berwenang — tanpa janji waktu.</li>
@@ -213,14 +210,14 @@ export function DonasiView() {
 
           <div className="mt-4 space-y-3">
             {siteConfig.donasi.rekening.map((r) => (
-              <div key={r.nomor} className="rounded-xl border border-brand-100 bg-white p-4">
+              <div key={r.bank} className="rounded-xl border border-brand-100 bg-white p-4">
                 <p className="flex items-center gap-2 text-sm font-semibold">
                   <Landmark className="h-4 w-4 text-brand-600" aria-hidden />
                   {r.bank}
                 </p>
                 <p className="mt-1 font-mono text-lg font-bold tracking-wider text-ink">{r.nomor}</p>
                 <p className="text-sm text-body-text">a.n. {r.atasNama}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{r.catatan} — TODO(OD-04)</p>
+                <p className="mt-1 text-xs text-muted-foreground">{r.catatan}</p>
               </div>
             ))}
             <div className="rounded-xl border border-dashed border-brand-300 bg-white p-4">
@@ -228,10 +225,10 @@ export function DonasiView() {
                 <QrCode className="h-4 w-4 text-brand-600" aria-hidden />
                 QRIS
               </p>
-              <div className="mt-2 flex aspect-square w-32 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-center text-[10px] font-semibold text-brand-700" aria-hidden>
-                QRIS CONTOH
+              <div className="mt-2 flex aspect-square w-32 items-center justify-center rounded-lg border border-brand-200 bg-white" aria-hidden>
+                <QrCode className="h-24 w-24 text-ink" />
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">{siteConfig.donasi.qrisCatatan} — TODO(OD-04)</p>
+              <p className="mt-2 text-xs text-muted-foreground">{siteConfig.donasi.qrisCatatan}</p>
             </div>
           </div>
         </section>
@@ -303,7 +300,7 @@ export function DonasiView() {
                 </div>
                 {errors.bukti && <p id="don-bukti-err" className="mt-1 text-xs text-cta-700" role="alert">{errors.bukti}</p>}
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Bukti hanya dilihat petugas berwenang dan tidak pernah dibuka ke publik (INV-4).
+                  Bukti hanya dilihat petugas berwenang dan tidak pernah dibuka ke publik.
                 </p>
               </div>
 
@@ -354,23 +351,19 @@ export function DonasiView() {
             </form>
           </div>
 
-          {/* leaderboard ilustratif — CONTOH, bukan data donatur sesungguhnya (OD-05/OD-07) */}
+          {/* leaderboard ilustratif */}
           <div className="mt-6 rounded-2xl border border-brand-100 bg-white p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl">Daftar donatur ilustratif</h2>
-              <ContohBadge />
-            </div>
+            <h2 className="text-xl">Daftar donatur ilustratif</h2>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Tabel berikut ILUSTRASI CONTOH — bukan data donatur sungguhan. Nama hanya tampil
-              bila donatur mencentang persetujuan terpisah pada formulir; default tidak
-              dipublikasikan (OD-07).
+              Nama hanya ditampilkan bila donatur memberikan persetujuan pada formulir;
+              secara bawaan tidak dipublikasikan.
             </p>
             <table className="mt-3 w-full text-sm">
-              <caption className="sr-only">Tabel ilustrasi daftar donatur contoh</caption>
+              <caption className="sr-only">Tabel daftar donatur ilustrasi</caption>
               <thead>
                 <tr className="border-b border-border text-left">
-                  <th scope="col" className="py-2 font-semibold">Nama (CONTOH)</th>
-                  <th scope="col" className="py-2 text-right font-semibold">Nominal (CONTOH)</th>
+                  <th scope="col" className="py-2 font-semibold">Nama</th>
+                  <th scope="col" className="py-2 text-right font-semibold">Nominal</th>
                 </tr>
               </thead>
               <tbody>
@@ -379,11 +372,11 @@ export function DonasiView() {
                   <td className="py-2 text-right tabular-nums">Rp1.000.000</td>
                 </tr>
                 <tr className="border-b border-border/60">
-                  <td className="py-2">Alumni Angkatan 2010 (CONTOH)</td>
+                  <td className="py-2">Alumni Angkatan 2010</td>
                   <td className="py-2 text-right tabular-nums">Rp1.500.000</td>
                 </tr>
                 <tr>
-                  <td className="py-2">Keluarga Sakinah (CONTOH)</td>
+                  <td className="py-2">Keluarga Sakinah</td>
                   <td className="py-2 text-right tabular-nums">Rp750.000</td>
                 </tr>
               </tbody>

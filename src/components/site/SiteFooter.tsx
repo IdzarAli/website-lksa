@@ -26,7 +26,7 @@ export function SiteFooter({
           </div>
           <p className="mt-3 text-sm leading-relaxed text-gray-300">
             Lembaga kesejahteraan sosial anak di {siteConfig.lokasi}. Berdiri{" "}
-            {siteConfig.tahunBerdiri}. Profil lengkap menunggu pengesahan pengurus.
+            {siteConfig.tahunBerdiri}, mendampingi anak binaan belajar, tumbuh, dan mandiri.
           </p>
           <p className="mt-3 flex items-start gap-2 rounded-lg bg-white/5 p-3 text-xs leading-relaxed text-gray-300">
             <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
@@ -36,7 +36,7 @@ export function SiteFooter({
 
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-200">
-            Kontak (CONTOH)
+            Kontak
           </h2>
           <ul className="mt-3 space-y-2 text-sm text-gray-300">
             <li className="flex items-start gap-2">
@@ -86,7 +86,7 @@ export function SiteFooter({
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-gray-400 sm:px-6">
-          © {new Date().getFullYear()} {siteConfig.namaLembaga} (prototipe). Donasi diproses
+          © {new Date().getFullYear()} {siteConfig.namaLembaga}. Donasi diproses
           dengan verifikasi manual di luar website; situs ini tidak menerima pembayaran
           langsung dan tidak mengunci jadwal persewaan.
         </div>

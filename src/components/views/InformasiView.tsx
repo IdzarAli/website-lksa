@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Megaphone, Search, XCircle } from "lucide-react";
-import { ContohBadge } from "@/components/site/ContohBadge";
-import { PhotoPlaceholder } from "@/components/site/PhotoPlaceholder";
 import ReactMarkdown from "react-markdown";
 
 /**
@@ -201,9 +199,11 @@ export function InformasiView({
                 className="mt-5 w-full rounded-xl border border-brand-100 object-cover"
               />
             ) : (
-              <div className="mt-5">
-                <PhotoPlaceholder label="FOTO BERITA ASLI (menunggu dari pengurus)" />
-              </div>
+              <img
+                src="/images/belajar.jpg"
+                alt={`Foto berita: ${detailAktif.judul}`}
+                className="mt-5 w-full rounded-xl border border-brand-100 object-cover"
+              />
             )}
 
             {/* isi disanitasi: dirender sebagai markdown TANPA raw HTML */}
@@ -308,7 +308,7 @@ export function InformasiView({
             <p className="text-xs text-muted-foreground">
               {data.total} berita ditemukan
               {q ? ` untuk “${q}”` : ""}
-              {kategori ? ` dalam kategori ${kategori}` : ""} · <ContohBadge className="ml-1" />
+              {kategori ? ` dalam kategori ${kategori}` : ""}
             </p>
             <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {data.items.map((a) => (
@@ -317,7 +317,7 @@ export function InformasiView({
                     {a.publicationConsent && a.mediaUrl ? (
                       <img src={a.mediaUrl} alt={a.mediaAlt || `Foto berita: ${a.judul}`} className="aspect-[16/10] w-full rounded-lg object-cover" />
                     ) : (
-                      <PhotoPlaceholder tinggi="aspect-[16/10]" />
+                      <img src="/images/belajar.jpg" alt={`Foto berita: ${a.judul}`} className="aspect-[16/10] w-full rounded-lg object-cover" />
                     )}
                     <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-brand-700">
                       {a.kategori} · <time dateTime={a.publishedAt ?? undefined}>{tgl(a.publishedAt)}</time>
@@ -371,13 +371,10 @@ export function InformasiView({
 
       {/* pengumuman */}
       <section className="mt-10" aria-labelledby="judul-pengumuman">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 id="judul-pengumuman" className="flex items-center gap-2 text-2xl">
-            <Megaphone className="h-5 w-5 text-brand-600" aria-hidden />
-            Pengumuman
-          </h2>
-          <ContohBadge />
-        </div>
+        <h2 id="judul-pengumuman" className="flex items-center gap-2 text-2xl">
+          <Megaphone className="h-5 w-5 text-brand-600" aria-hidden />
+          Pengumuman
+        </h2>
         <ul className="mt-4 space-y-3">
           {pengumuman.length === 0 && (
             <li className="rounded-xl border border-brand-100 bg-white p-4 text-sm text-muted-foreground">

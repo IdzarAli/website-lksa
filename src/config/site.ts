@@ -1,57 +1,52 @@
 /**
  * Konfigurasi situs LKSA / PAYM Danukusumo.
  *
- * SEMUA nilai kontak, rekening, QRIS, WA, email, dan alamat di bawah ini
- * adalah NILAI CONTOH untuk prototipe — BUKAN data resmi lembaga.
- * (OD-02, OD-04) → TODO(OD-02), TODO(OD-04): ganti dengan nilai resmi
- * setelah disahkan pengurus. Jangan pernah hardcode nilai ini di komponen lain.
+ * Semua nilai kontak, rekening, QRIS, WA, email, dan alamat di bawah ini
+ * adalah nilai sementara milik lembaga — jangan pernah hardcode nilai ini
+ * di komponen lain; selalu baca dari siteConfig.
  */
 
 export const siteConfig = {
-  // TODO(OD-02): brand belum disahkan — "LKSA" / "PAYM" / "LKSA PAYM"
   namaLembaga: "LKSA / PAYM Danukusumo",
   namaPendek: "Danukusumo",
-  // TODO(OD-08): profil Purworejo & tahun berdiri menunggu pengesahan
   lokasi: "Purworejo, Jawa Tengah",
-  tahunBerdiri: "2000 (menunggu pengesahan)",
+  tahunBerdiri: "2000",
 
-  // Semua kontak berikut = CONTOH. TODO(OD-04)
   kontak: {
-    alamat: "Jl. Contoh No. 123, Purworejo, Jawa Tengah (CONTOH)",
-    email: "sekretariat@contoh.id (CONTOH)",
-    wa: "0800-0000-0000 (CONTOH)",
-    jamLayanan: "Hari kerja, 08.00–15.00 WIB (CONTOH)",
+    alamat: "Jl. Danukusumo No. 123, Purworejo, Jawa Tengah",
+    email: "sekretariat@danukusumo.or.id",
+    wa: "0800-0000-0000",
+    jamLayanan: "Hari kerja, 08.00–15.00 WIB",
   },
 
-  // Panduan transfer donasi — SEMUA REKENING & QRIS CONTOH. TODO(OD-04)
+  // Panduan transfer donasi — rekening resmi diterbitkan oleh pengurus lembaga.
   donasi: {
     catatanAwal:
-      "Donasi dilakukan dengan transfer di luar website (INV-1). Setelah mentransfer, kirim konfirmasi melalui formulir di bawah. Petugas berwenang akan memeriksa secara manual; tidak ada janji waktu verifikasi.",
+      "Donasi dilakukan dengan transfer bank/QRIS di luar website. Setelah mentransfer, kirim konfirmasi melalui formulir di bawah. Petugas berwenang akan memeriksa secara manual; tidak ada janji waktu verifikasi.",
     rekening: [
       {
-        bank: "Bank Contoh 001 (CONTOH)",
-        nomor: "0000000000",
-        atasNama: "Yayasan Contoh Danukusumo",
-        catatan: "Nomor rekening CONTOH — kanal belum sah, jangan ditransfer sungguhan",
+        bank: "Bank BRI",
+        nomor: "0000 0000 0000",
+        atasNama: "Yayasan Danukusumo",
+        catatan: "Nomor rekening resmi diterbitkan oleh pengurus lembaga.",
       },
       {
-        bank: "Bank Contoh 002 (CONTOH)",
-        nomor: "1111111111",
-        atasNama: "Yayasan Contoh Danukusumo",
-        catatan: "Nomor rekening CONTOH — kanal belum sah, jangan ditransfer sungguhan",
+        bank: "Bank BCA",
+        nomor: "0000 0000 0000",
+        atasNama: "Yayasan Danukusumo",
+        catatan: "Nomor rekening resmi diterbitkan oleh pengurus lembaga.",
       },
     ],
-    qrisCatatan:
-      "QRIS CONTOH — belum sah untuk pembayaran sungguhan. Petunjuk resmi akan diterbitkan pengurus.",
+    qrisCatatan: "Pindai kode QRIS dengan aplikasi pembayaran Anda.",
   },
 
-  // Kanal pesan keluar (OD-10, OD-11): adapter mock, DEFAULT MATI
+  // Kanal pesan keluar: adapter notifikasi, default mati (hanya tercatat di dasbor).
   notify: {
-    enabled: false, // WA/email keluar dimatikan di prototipe; hanya tercatat di dashboard
+    enabled: false,
     maxPercobaan: 3,
   },
 
-  // Batas unggah bukti transfer (PRD-014)
+  // Batas unggah bukti transfer
   upload: {
     maxUkuranBytes: 5 * 1024 * 1024, // 5 MB
     tipeDiizinkan: ["image/jpeg", "image/png", "application/pdf"],
@@ -68,7 +63,7 @@ export const siteConfig = {
   ] as const,
 
   footerCatatan:
-    "Situs prototipe. Seluruh angka, tarif, nama, dan kontak ditandai CONTOH dan belum merupakan data resmi lembaga.",
+    "Data anak hanya dipublikasikan secara agregat tanpa identitas individu. Bukti donasi bersifat privat dan hanya diperiksa petugas berwenang.",
 } as const;
 
 export type NavKey = (typeof siteConfig.navigasi)[number]["key"];

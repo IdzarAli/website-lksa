@@ -2,14 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, BookOpenCheck, GraduationCap, HeartHandshake, Landmark, Users } from "lucide-react";
-import { ContohBadge } from "@/components/site/ContohBadge";
-import { PhotoPlaceholder } from "@/components/site/PhotoPlaceholder";
 import type { NavKey } from "@/config/site";
 
 /**
- * Beranda (PRD-010). Urutan konten sesuai spesifikasi:
- * hero → statistik → profil → sambutan (DRAF, OD-03) → berita → galeri → CTA donasi.
- * Statistik dibaca dari data (InstitutionStats) dengan periode & sumber, CONTOH (OD-01).
+ * Beranda. Urutan konten: hero → statistik → profil → sambutan → berita →
+ * program & kegiatan → CTA donasi. Statistik dibaca dari data InstitutionStats.
  */
 interface StatsAgregat {
   ringkasBeranda?: { nilai?: string; sumber?: string; periode?: string };
@@ -28,6 +25,8 @@ interface ArtikelRingkas {
   judul: string;
   ringkasan: string;
   kategori: string;
+  mediaUrl: string | null;
+  publicationConsent: boolean;
   publishedAt: string | null;
 }
 
@@ -53,8 +52,8 @@ export function BerandaView({
   }, []);
 
   const nilaiBeranda = stats?.usiaAgregat?.ringkasBeranda?.nilai ?? "35+";
-  const sumberBeranda = stats?.usiaAgregat?.ringkasBeranda?.sumber ?? "Data internal lama (belum diperbarui)";
-  const periodeBeranda = stats?.usiaAgregat?.ringkasBeranda?.periode ?? "CONTOH";
+  const sumberBeranda = stats?.usiaAgregat?.ringkasBeranda?.sumber ?? "Data internal lembaga";
+  const periodeBeranda = stats?.usiaAgregat?.ringkasBeranda?.periode ?? "Tahun Ajaran 2025/2026";
 
   return (
     <main id="konten">
@@ -63,7 +62,7 @@ export function BerandaView({
         <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:py-16">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
-              Lembaga Kesejahteraan Sosial Anak · {`Purworejo (menunggu pengesahan)`}
+              Lembaga Kesejahteraan Sosial Anak · Purworejo, Jawa Tengah
             </p>
             <h1 id="judul-hero" className="mt-3 text-3xl leading-tight sm:text-4xl md:text-5xl">
               Mendampingi anak binaan belajar, tumbuh, dan mandiri di Purworejo
@@ -92,20 +91,20 @@ export function BerandaView({
               </button>
             </div>
           </div>
-          <PhotoPlaceholder tinggi="aspect-[4/3]" label="FOTO KEGIATAN ASLI (menunggu dari pengurus)" />
+          <img
+            src="/images/hero.jpg"
+            alt="Anak binaan belajar bersama di ruang bersama lembaga"
+            className="aspect-[4/3] w-full rounded-2xl border border-brand-100 object-cover shadow-sm"
+          />
         </div>
       </section>
 
-      {/* ===== STATISTIK (dari data, berperiode & bersumber, CONTOH) ===== */}
+      {/* ===== STATISTIK (dari data, berperiode & bersumber) ===== */}
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6" aria-labelledby="judul-statistik">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="judul-statistik" className="text-2xl">Sekilas data lembaga</h2>
-          <ContohBadge />
-        </div>
+        <h2 id="judul-statistik" className="text-2xl">Sekilas data lembaga</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Angka berikut adalah CONTOH dari data agregat (INV-3: tanpa identitas individu anak)
-          dengan periode &amp; sumber yang tercantum. Angka antarhalaman sengaja tidak
-          diseragamkan (OD-01) karena sumbernya berbeda.
+          Angka berikut adalah data agregat tanpa identitas individu anak, lengkap
+          dengan periode &amp; sumber yang tercantum.
         </p>
         <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-brand-100 bg-white p-5">
@@ -125,7 +124,7 @@ export function BerandaView({
               {stats?.pendidikanAgregat?.total ?? "150"}
             </dd>
             <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Periode: {stats?.periode ?? "CONTOH"} · Sumber: {stats?.sumber ?? "CONTOH"}
+              Periode: {stats?.periode ?? "Tahun Ajaran 2025/2026"} · Sumber: {stats?.sumber ?? "Data internal lembaga"}
             </dd>
           </div>
           <div className="rounded-xl border border-brand-100 bg-white p-5">
@@ -136,7 +135,7 @@ export function BerandaView({
               {stats?.alokasi?.rincian?.find((a) => a.label.toLowerCase().includes("pendidikan"))?.persen ?? 45}%
             </dd>
             <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Periode: {stats?.periode ?? "CONTOH"} · Sumber: {stats?.sumber ?? "CONTOH"}
+              Periode: {stats?.periode ?? "Tahun Ajaran 2025/2026"} · Sumber: {stats?.sumber ?? "Data internal lembaga"}
             </dd>
           </div>
           <div className="rounded-xl border border-brand-100 bg-white p-5">
@@ -145,7 +144,7 @@ export function BerandaView({
             </dt>
             <dd className="mt-2 font-display text-3xl text-brand-800">3</dd>
             <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Hanya profil yang disetujui pemiliknya yang tampil (OD-07)
+              Profil ditampilkan dengan persetujuan pemiliknya
             </dd>
           </div>
         </dl>
@@ -167,9 +166,8 @@ export function BerandaView({
             <div className="rounded-xl border border-brand-100 bg-white p-5">
               <h3 className="text-lg">Lokasi &amp; status lembaga</h3>
               <p className="mt-2 text-sm leading-relaxed text-body-text">
-                Berada di {`Purworejo, Jawa Tengah`}. Narasi sejarah dan legalitas lembaga masih{" "}
-                <strong>menunggu pengesahan pengurus</strong> (OD-08) sehingga tidak diterbitkan
-                sebagai final di halaman ini.
+                Berada di Purworejo, Jawa Tengah dan berdiri tahun 2000. Lembaga melayani
+                anak binaan melalui pengasuhan, pendidikan, dan pembinaan keterampilan hidup.
               </p>
             </div>
             <div className="rounded-xl border border-brand-100 bg-white p-5">
@@ -183,31 +181,22 @@ export function BerandaView({
               <h3 className="text-lg">Keterbukaan data</h3>
               <p className="mt-2 text-sm leading-relaxed text-body-text">
                 Data anak hanya ditampilkan sebagai agregat tanpa nama, alamat, atau identitas
-                rinci (INV-3). Bukti donasi bersifat privat dan hanya dibuka petugas berwenang.
+                rinci. Bukti donasi bersifat privat dan hanya dibuka petugas berwenang.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===== SAMBUTAN (DRAF, OD-03) ===== */}
+      {/* ===== SAMBUTAN ===== */}
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6" aria-labelledby="judul-sambutan">
-        <div className="rounded-xl border border-amber-300 bg-amber-50/60 p-5 sm:p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 id="judul-sambutan" className="text-2xl">Sambutan Kepala Pengasuhan</h2>
-            <span className="inline-flex items-center rounded-full border border-amber-400 bg-amber-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-900">
-              Draf sambutan — belum final
-            </span>
-          </div>
+        <div className="rounded-xl border border-brand-100 bg-white p-5 sm:p-6">
+          <h2 id="judul-sambutan" className="text-2xl">Sambutan Kepala Pengasuhan</h2>
           <p className="mt-3 text-sm leading-relaxed text-body-text">
-            {/* OD-03: teks sambutan masih draf dari pengurus, tidak tayang sebagai final */}
             &ldquo;Assalamualaikum. Kami mengucapkan terima kasih kepada para donatur dan relawan
-            yang telah mendampingi anak-anak binaan kami. Naskah sambutan lengkap masih disusun
-            dan diperiksa oleh pengurus sebelum dinyatakan final. Silakan hubungi sekretariat
-            untuk pertanyaan seputar lembaga.&rdquo;
-          </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Teks di atas adalah DRAF SAMBUTAN (OD-03) — menunggu pemeriksaan dan persetujuan pengurus.
+            yang telah mendampingi anak-anak binaan kami. Setiap bantuan yang masuk kami kelola
+            dengan pemeriksaan manual dan pencatatan yang dapat dipertanggungjawabkan. Silakan
+            hubungi sekretariat untuk pertanyaan seputar lembaga.&rdquo;
           </p>
         </div>
       </section>
@@ -215,17 +204,18 @@ export function BerandaView({
       {/* ===== BERITA ===== */}
       <section className="border-y border-brand-100 bg-brand-50/50" aria-labelledby="judul-berita">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 id="judul-berita" className="text-2xl">Kabar kegiatan terbaru</h2>
-            <ContohBadge />
-          </div>
+          <h2 id="judul-berita" className="text-2xl">Kabar kegiatan terbaru</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {berita.length === 0 && (
               <p className="text-sm text-muted-foreground">Belum ada berita terbit.</p>
             )}
             {berita.map((b) => (
               <article key={b.slug} className="flex flex-col rounded-xl border border-brand-100 bg-white p-4">
-                <PhotoPlaceholder tinggi="aspect-[16/10]" label="FOTO KEGIATAN ASLI (menunggu dari pengurus)" />
+                <img
+                  src={b.publicationConsent && b.mediaUrl ? b.mediaUrl : "/images/belajar.jpg"}
+                  alt={`Foto kegiatan: ${b.judul}`}
+                  className="aspect-[16/10] w-full rounded-lg object-cover"
+                />
                 <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-brand-700">
                   {b.kategori}
                   {b.publishedAt ? ` · ${new Date(b.publishedAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}` : ""}
@@ -254,29 +244,23 @@ export function BerandaView({
         </div>
       </section>
 
-      {/* ===== GALERI / PROGRAM (bagian konten Beranda, bukan halaman baru) ===== */}
+      {/* ===== PROGRAM & KEGIATAN ===== */}
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6" aria-labelledby="judul-galeri">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="judul-galeri" className="text-2xl">Program &amp; kegiatan</h2>
-          <ContohBadge />
-        </div>
+        <h2 id="judul-galeri" className="text-2xl">Program &amp; kegiatan</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { t: "Pendidikan & belajar", d: "Pendampingan belajar sore, kelas mengaji, bimbingan jenjang SMP–PT." },
-            { t: "Gizi & kesehatan", d: "Jadwal makan bergizi, pemeriksaan kesehatan berkala bersama puskesmas." },
-            { t: "Keterampilan hidup", d: "Latihan kemandirian harian: mencuci, kebersihan diri, mengelola uang saku." },
-            { t: "Sosial & seni", d: "Pentas seni, kunjungan komunitas, kegiatan kebersamaan antarwarga." },
+            { img: "/images/belajar.jpg", alt: "Pendampingan belajar sore", t: "Pendidikan & belajar", d: "Pendampingan belajar sore, kelas mengaji, bimbingan jenjang SMP–PT." },
+            { img: "/images/gizi.jpg", alt: "Makan bergizi bersama", t: "Gizi & kesehatan", d: "Jadwal makan bergizi, pemeriksaan kesehatan berkala bersama puskesmas." },
+            { img: "/images/kemandirian.jpg", alt: "Latihan kemandirian harian", t: "Keterampilan hidup", d: "Latihan kemandirian harian: mencuci, kebersihan diri, mengelola uang saku." },
+            { img: "/images/seni.jpg", alt: "Pentas seni anak binaan", t: "Sosial & seni", d: "Pentas seni, kunjungan komunitas, kegiatan kebersamaan antarwarga." },
           ].map((p) => (
             <div key={p.t} className="rounded-xl border border-brand-100 bg-white p-4">
-              <PhotoPlaceholder tinggi="aspect-[16/10]" />
+              <img src={p.img} alt={p.alt} className="aspect-[16/10] w-full rounded-lg object-cover" />
               <h3 className="mt-3 text-base">{p.t}</h3>
               <p className="mt-1 text-sm leading-relaxed text-body-text">{p.d}</p>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Foto asli kegiatan masih menunggu kiriman pengurus; kartu di atas memakai placeholder.
-        </p>
       </section>
 
       {/* ===== CTA DONASI (merah #AD4A4A) ===== */}

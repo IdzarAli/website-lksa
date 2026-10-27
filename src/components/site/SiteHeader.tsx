@@ -33,7 +33,7 @@ export function SiteHeader({
               {siteConfig.namaLembaga}
             </span>
             <span className="block text-xs text-muted-foreground">
-              {siteConfig.lokasi} · situs prototipe
+              {siteConfig.lokasi}
             </span>
           </span>
         </button>

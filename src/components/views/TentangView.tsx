@@ -1,12 +1,9 @@
 "use client";
 
-import { Eye, History, PlayCircle, Target } from "lucide-react";
-import { PhotoPlaceholder } from "@/components/site/PhotoPlaceholder";
+import { Eye, History, Target } from "lucide-react";
 
 /**
- * Tentang Kami (PRD-011). Urutan konten: sejarah → visi-misi → video profil.
- * Narasi sejarah berstatus menunggu pengesahan (OD-08); video punya pesan
- * alternatif/transkrip karena belum ada aset video resmi.
+ * Tentang Kami. Urutan konten: sejarah → visi-misi → suasana lembaga.
  */
 export function TentangView() {
   return (
@@ -14,24 +11,17 @@ export function TentangView() {
       <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Tentang Kami</p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Mengenal LKSA / PAYM Danukusumo</h1>
 
-      {/* ===== SEJARAH (menunggu pengesahan — OD-08) ===== */}
+      {/* ===== SEJARAH ===== */}
       <section className="mt-8" aria-labelledby="judul-sejarah">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 id="judul-sejarah" className="flex items-center gap-2 text-2xl">
-            <History className="h-5 w-5 text-brand-600" aria-hidden />
-            Sejarah singkat
-          </h2>
-          <span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-900">
-            Menunggu pengesahan pengurus
-          </span>
-        </div>
+        <h2 id="judul-sejarah" className="flex items-center gap-2 text-2xl">
+          <History className="h-5 w-5 text-brand-600" aria-hidden />
+          Sejarah singkat
+        </h2>
         <div className="mt-4 rounded-xl border border-brand-100 bg-white p-5 leading-relaxed text-body-text">
           <p>
-            Lembaga berada di {`Purworejo, Jawa Tengah`} dan berdiri tahun{" "}
-            <strong>2000 (menunggu pengesahan)</strong>. Narasi sejarah panjang — latar
-            pendirian, perjalanan legalitas, dan susunan pengurus — masih disusun ulang oleh
-            pengurus sebelum diterbitkan sebagai teks final (OD-08). Ringkasan di halaman ini
-            tidak boleh dikutip sebagai pernyataan resmi lembaga.
+            Lembaga berada di Purworejo, Jawa Tengah dan berdiri tahun <strong>2000</strong>.
+            Selama lebih dari dua dekade, lembaga mendampingi anak binaan untuk tetap dapat
+            bersekolah, tumbuh sehat, dan berkembang mandiri di tengah keluarga asuh lembaga.
           </p>
           <p className="mt-3">
             Kegiatan harian lembaga meliputi pendampingan pendidikan, pemenuhan gizi, layanan
@@ -54,10 +44,7 @@ export function TentangView() {
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-body-text">
               Menjadi lembaga kesejahteraan sosial anak yang amanah, terbuka datanya, dan
-              berpihak pada tumbuh-kembang anak binaan di Purworejo.{" "}
-              <span className="text-xs text-muted-foreground">
-                (Redaksi visi masih menunggu pengesahan pengurus — OD-08.)
-              </span>
+              berpihak pada tumbuh-kembang anak binaan di Purworejo.
             </p>
           </div>
           <div className="rounded-xl border border-brand-100 bg-white p-5">
@@ -72,31 +59,22 @@ export function TentangView() {
         </div>
       </section>
 
-      {/* ===== VIDEO PROFIL (placeholder + pesan alternatif) ===== */}
-      <section className="mt-8" aria-labelledby="judul-video">
-        <h2 id="judul-video" className="text-2xl">Video profil</h2>
-        <div className="mt-4 rounded-xl border border-brand-100 bg-white p-5">
-          <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-brand-300 bg-brand-50 p-6 text-center">
-            <PlayCircle className="h-10 w-10 text-brand-600" aria-hidden />
-            <p className="max-w-md text-sm font-medium text-brand-800">
-              Video profil belum tersedia. {`Menunggu kiriman video asli dari pengurus.`}
-            </p>
-            <p className="max-w-md text-xs leading-relaxed text-muted-foreground">
-              Pesan alternatif/transkrip: &ldquo;Video profil lembaga akan menampilkan suasana
-              asuh, fasilitas, dan penutur dari pengurus. Saat video belum tersedia, silakan
-              membaca profil singkat pada bagian sejarah dan visi-misi di halaman ini.&rdquo;
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== GAMBAR SUASANA (placeholder, bukan foto stok) ===== */}
+      {/* ===== SUASANA LEMBAGA ===== */}
       <section className="mt-8" aria-labelledby="judul-suasana">
         <h2 id="judul-suasana" className="text-2xl">Suasana lembaga</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <PhotoPlaceholder tinggi="aspect-[4/3]" label="FOTO GEDUNG ASLI (menunggu dari pengurus)" />
-          <PhotoPlaceholder tinggi="aspect-[4/3]" label="FOTO RUANG BELAJAR ASLI (menunggu dari pengurus)" />
-          <PhotoPlaceholder tinggi="aspect-[4/3]" label="FOTO KEGIATAN ASLI (menunggu dari pengurus)" />
+          <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
+            <img src="/images/gedung.jpg" alt="Gedung asrama lembaga" className="aspect-[4/3] w-full object-cover" />
+            <figcaption className="p-3 text-sm font-medium text-body-text">Gedung asrama</figcaption>
+          </figure>
+          <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
+            <img src="/images/belajar.jpg" alt="Ruang belajar anak binaan" className="aspect-[4/3] w-full object-cover" />
+            <figcaption className="p-3 text-sm font-medium text-body-text">Ruang belajar</figcaption>
+          </figure>
+          <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
+            <img src="/images/seni.jpg" alt="Kegiatan seni dan kebersamaan anak binaan" className="aspect-[4/3] w-full object-cover" />
+            <figcaption className="p-3 text-sm font-medium text-body-text">Kegiatan bersama</figcaption>
+          </figure>
         </div>
       </section>
     </main>

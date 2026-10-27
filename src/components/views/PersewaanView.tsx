@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Armchair, CalendarDays, Info, MapPin, TentTree, Warehouse, TriangleAlert, Users2 } from "lucide-react";
-import { ContohBadge } from "@/components/site/ContohBadge";
 import { formatRupiah, hitungEstimasi, jumlahHariInklusif, HasilEstimasi } from "@/lib/pricing";
 
 /**
@@ -187,12 +186,12 @@ export function PersewaanView() {
             {referensi}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-body-text">
-            Permohonan Anda belum merupakan booking dan tidak mengunci jadwal (INV-2). Petugas
+            Permohonan Anda belum merupakan booking dan tidak mengunci jadwal. Petugas
             akan menghubungi Anda untuk pemeriksaan lanjutan; tidak ada pembayaran pada tahap ini.
           </p>
           {duplikat && (
             <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-              Permohonan dengan kunci idempotensi sama sudah pernah dikirim — data hanya dicatat satu kali.
+              Permohonan yang sama sudah pernah dikirim — data hanya dicatat satu kali.
             </p>
           )}
           <button
@@ -215,17 +214,13 @@ export function PersewaanView() {
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />
         <span>
           Halaman ini menerima <strong>permohonan</strong>, bukan booking: jadwal tidak dikunci dan
-          tidak ada pembayaran di sini (INV-2). Pengurus akan menghubungi Anda untuk pemeriksaan.
-          Seluruh tarif adalah CONTOH — TODO(OD-05).
+          tidak ada pembayaran di sini. Pengurus akan menghubungi Anda untuk pemeriksaan lanjutan.
         </span>
       </p>
 
       {/* ===== KATALOG ===== */}
       <section className="mt-8" aria-labelledby="judul-katalog">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 id="judul-katalog" className="text-2xl">Katalog (CONTOH)</h2>
-          <ContohBadge />
-        </div>
+        <h2 id="judul-katalog" className="text-2xl">Katalog</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {items.length === 0 && <p className="text-sm text-muted-foreground">Katalog belum termuat…</p>}
           {items.map((it) => {
@@ -398,8 +393,8 @@ export function PersewaanView() {
           <div className="sticky top-40 rounded-2xl border border-brand-100 bg-white p-5">
             <h2 id="judul-estimasi" className="text-xl">Ringkasan &amp; estimasi biaya</h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              Estimasi dihitung dari tarif CONTOH. <strong>Estimasi belum final</strong> —
-              dihitung ulang oleh server saat permohonan dikirim dan disesuaikan petugas.
+              Estimasi bersifat awal dan dapat disesuaikan oleh petugas saat pemeriksaan
+              permohonan.
             </p>
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between gap-2">
@@ -426,7 +421,7 @@ export function PersewaanView() {
 
             {estimasi && (
               <div className="mt-4 rounded-lg border border-brand-100 bg-brand-50/60 p-4" aria-live="polite">
-                <h3 className="text-sm font-semibold">Rincian tarif (CONTOH)</h3>
+                <h3 className="text-sm font-semibold">Rincian tarif</h3>
                 <ul className="mt-2 space-y-1.5 text-sm">
                   {estimasi.rincian.map((r) => (
                     <li key={r.label} className="flex justify-between gap-2">
@@ -440,8 +435,8 @@ export function PersewaanView() {
                   <span className="tabular-nums font-bold text-brand-800">{formatRupiah(estimasi.total)}</span>
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Estimasi belum final. Perpindahan jenis ke kursi/tenda otomatis menghapus
-                  tambahan aula (PRD-022).
+                  Total adalah estimasi awal; perpindahan jenis sewa otomatis menghapus tambahan
+                  aula.
                 </p>
               </div>
             )}

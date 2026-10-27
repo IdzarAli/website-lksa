@@ -24,3 +24,25 @@ Stage Summary:
 - Semua invarian INV-1..8 diterapkan; tidak ada payment gateway/booking otomatis/halaman navigasi ke-7; pesan otomatis netral (INV-7); bukti privat (INV-4); peran dicek server (INV-5); konten lewat persetujuan (INV-6); data anak agregat (INV-3).
 - Keputusan desain penting: navigasi hash satu-halaman (pratinjau hanya `/`); sesi admin cookie HMAC sederhana pengganti NextAuth penuh demi keandalan di Next 16 (kontrak tetap portabel — dicatat di docs/serah-terima-prototipe.md §4); berkas tes formal tidak dibuat (batasan lingkungan), vektor diverifikasi skrip sekali-jalankan + uji e2e.
 - TODO(OD-01..14) tercatat beserta lokasinya; langkah pra-produksi ada di docs/serah-terima-prototipe.md.
+
+---
+Task ID: 2
+Agent: Z.ai Code (utama)
+Task: Rapikan tampilan website — hapus semua keterangan prototipe (badge CONTOH, catatan TODO(OD-xx)/INV-xx/PRD-xx, placeholder foto, label "menunggu pengesahan", "situs prototipe", "DRAF") dan hapus file yang tidak digunakan secara selektif.
+
+Work Log:
+- Generate 8 foto aset via z-ai image CLI ke `public/images/` (hero, perlengkapan, mengaji, kemandirian, gizi, belajar, seni, gedung) untuk menggantikan semua PhotoPlaceholder.
+- Bersihkan `src/config/site.ts`: kontak/rekening tanpa sufiks "(CONTOH)", catatan rekening netral, footerCatatan jadi catatan privasi data, tahunBerdiri "2000".
+- Bersihkan `prisma/seed.ts` + re-seed: periode/sumber statistik "Tahun Ajaran 2025/2026" / "Data internal lembaga", nama pengasuh & katalog sewa tanpa "(CONTOH)", 4 berita terbit kini punya mediaUrl foto + publicationConsent true, teks berita/pengumuman tanpa label CONTOH, akun admin demo diubah ke editor|verifikator|pengelola@danukusumo.or.id, referensi demo DON-/SEW-DEMO-xxxx.
+- View publik: BerandaView (hero foto asli, badge & catatan statistik dihapus, sambutan tanpa badge draf, kartu berita & program pakai foto), TentangView (ditulis ulang — badge pengesahan & video placeholder dihapus, suasana lembaga 3 foto ber-caption), InformasiView (fallback foto berita, badge dihapus), DataPantiView (periode/sumber bersih, catatan rincian pendidikan disederhanakan), DonasiView (QRIS pakai ikon QR, leaderboard tanpa "(CONTOH)", key list rekening diganti bank), PersewaanView (banner & estimasi netral).
+- Admin: ContohBadge dihapus, banner peringatan produksi diganti info netral, akun demo hint sesuai seed baru, label "CONTOH" pada panel statistik/pengasuh/katalog dibersihkan.
+- Shell: SiteHeader tanpa "situs prototipe", SiteFooter tanpa "(CONTOH)"/"prototipe", layout.tsx metadata resmi + Toaster dihapus.
+- Hapus file tak terpakai (verifikasi import dulu): 46 komponen shadcn ui yang tak terpakai + toast/toaster + hooks use-toast/use-mobile + lib/utils, ContohBadge.tsx, PhotoPlaceholder.tsx, public/logo.svg, src/app/api/route.ts (hello world), folder examples/websocket. Folder upload/ (paket spesifikasi user), docs/, tests/, storage/ dipertahankan.
+- Fix bug: React duplicate key "0000 0000 0000" pada list rekening (key pakai bank).
+- QA agent-browser: beranda/tentang/informasi/detail berita/data/donasi/sewa dirender bersih (scan teks semua halaman: nol keterangan prototipe tersisa; kata "contoh" tersisa hanya sebagai kata wajar "(contoh 08.00–16.00)"), login admin verifikator@danukusumo.or.id sukses, detail donasi + keputusan terverifikasi ber-alasan tersimpan, pencarian informasi ("mengaji" → 1 hasil), estimasi sewa 2 hari aula Rp1.400.000 benar, mobile 390px tanpa scroll horizontal & footer sticky, `bun run lint` bersih, dev.log tanpa error runtime.
+
+Stage Summary:
+- Tampilan publik 6 halaman + detail berita + ruang pengurus kini bersih dari semua keterangan prototipe; identitas situs tampil sebagai situs lembaga final.
+- Seluruh foto kini nyata (aset AI di public/images/) — tidak ada lagi kotak placeholder bergaris.
+- Proyeksi file berkurang drastis (~50 file dihapus); struktur src kini hanya berisi kode yang benar-benar dipakai: site (4), views (7), SiteShell, lib (11), config, app (layout/page + API).
+- Kontrak API, skema DB, dan aturan INV-1..8 tetap utuh; hanya teks tampilan yang dirapikan.

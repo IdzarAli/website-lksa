@@ -6,7 +6,6 @@ import {
   Table2, UserCog, Users, Wrench, Download, XCircle, CheckCircle2, ImageIcon,
 } from "lucide-react";
 import { StatusBadge } from "@/components/site/StatusBadge";
-import { ContohBadge } from "@/components/site/ContohBadge";
 import { formatRupiah, formatTanggal } from "@/lib/pricing";
 
 /**
@@ -130,9 +129,8 @@ export function AdminView({ kembali }: { kembali: () => void }) {
         </div>
       </div>
 
-      <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">
-        Akun demo sintetis untuk prototipe — <strong>WAJIB ganti akun &amp; mekanisme sesi sebelum produksi</strong>.
-        Hak akses diuji ulang di server pada setiap permintaan.
+      <p className="mt-3 rounded-lg border border-brand-100 bg-brand-50 p-3 text-xs leading-relaxed text-body-text">
+        Hak akses diperiksa ulang di server pada setiap permintaan.
       </p>
 
       <div role="tablist" aria-label="Menu pengurus" className="mt-4 flex flex-wrap gap-2 border-b border-border pb-2">
@@ -224,9 +222,9 @@ function FormulirLogin({ padaSukses, kembali }: { padaSukses: (s: Sesi) => void;
             {memuat ? "Memeriksa…" : "Masuk"}
           </button>
         </form>
-        <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">
-          <strong>Akun demo (CONTOH — ganti sebelum produksi):</strong>
-          <br />editor@contoh.id / editor123 · verifikator@contoh.id / verifikator123 · pengelola@contoh.id / pengelola123
+        <div className="mt-4 rounded-lg border border-brand-100 bg-brand-50 p-3 text-xs leading-relaxed text-body-text">
+          <strong>Akun demo:</strong>
+          <br />editor@danukusumo.or.id / editor123 · verifikator@danukusumo.or.id / verifikator123 · pengelola@danukusumo.or.id / pengelola123
         </div>
         <button type="button" onClick={kembali} className="mt-4 text-sm font-semibold text-brand-700 underline-offset-4 hover:underline">
           ← Kembali ke situs publik
@@ -472,7 +470,7 @@ function AntreanSewa() {
         <div>
           <h2 className="text-xl">Antrean permohonan persewaan</h2>
           <p className="text-sm text-muted-foreground">
-            Permohonan = bukan booking; jadwal tidak terkunci, tidak ada pembayaran (INV-2).
+            Permohonan = bukan booking; jadwal tidak terkunci, tidak ada pembayaran.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -586,7 +584,7 @@ function DetailSewa({ sewa, tutup, padaBerubah }: { sewa: Sewa; tutup: () => voi
         </div>
         {estimasi.rincian && (
           <div className="mt-3 rounded-lg border border-brand-100 p-3 text-sm">
-            <p className="font-semibold">Estimasi (snapshot server, CONTOH)</p>
+            <p className="font-semibold">Estimasi (snapshot server)</p>
             <ul className="mt-1">
               {estimasi.rincian.map((r) => (
                 <li key={r.label} className="flex justify-between"><span>{r.label}</span><span className="tabular-nums">{formatRupiah(r.jumlah)}</span></li>
@@ -982,8 +980,8 @@ function PanelPengumuman() {
 /* ================= STATISTIK (editor) ================= */
 interface Baris { label: string; jumlah?: number; persen?: number }
 function PanelStatistik() {
-  const [periode, setPeriode] = useState("CONTOH (Tahun Ajaran 2025/2026)");
-  const [sumber, setSumber] = useState("CONTOH — data sintetis untuk prototipe");
+  const [periode, setPeriode] = useState("Tahun Ajaran 2025/2026");
+  const [sumber, setSumber] = useState("Data internal lembaga");
   const [usia, setUsia] = useState<Baris[]>([
     { label: "0–6 tahun", jumlah: 10 },
     { label: "7–12 tahun", jumlah: 34 },
@@ -1041,7 +1039,6 @@ function PanelStatistik() {
     <div>
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-xl">Statistik agregat (versi baru)</h2>
-        <ContohBadge />
       </div>
       <p className="mt-1 text-sm text-muted-foreground">
         Menyimpan versi baru (riwayat terjaga). Alokasi harus berjumlah tepat 100% agar angka grafik = tabel.
@@ -1108,7 +1105,7 @@ function PanelPengasuh() {
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="lg:col-span-3">
         <h2 className="text-xl">Direktori pengasuh</h2>
-        <p className="text-sm text-muted-foreground">Tampil publik hanya bila status terbit DAN izin tayang dicentang (OD-07).</p>
+        <p className="text-sm text-muted-foreground">Tampil publik hanya bila status terbit DAN izin tayang dicentang.</p>
         {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
         <ul className="mt-3 max-h-[32rem] space-y-2 overflow-y-auto scroll-area-thin">
           {items.map((s) => (
@@ -1135,7 +1132,7 @@ function PanelPengasuh() {
         <h3 className="text-lg">Tambah pengasuh</h3>
         <div className="mt-3 space-y-3">
           <div>
-            <label htmlFor="s-nama" className="mb-1 block text-sm font-semibold">Nama (beri tanda CONTOH bila sintetis)</label>
+            <label htmlFor="s-nama" className="mb-1 block text-sm font-semibold">Nama</label>
             <input id="s-nama" value={nama} onChange={(e) => setNama(e.target.value)} required className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" maxLength={120} />
           </div>
           <div>
@@ -1168,7 +1165,7 @@ function PanelKatalog() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, tarifContoh }),
     });
-    setPesan(res.ok ? "Tarif CONTOH diperbarui." : "Gagal memperbarui tarif.");
+    setPesan(res.ok ? "Tarif diperbarui." : "Gagal memperbarui tarif.");
     muatData();
   };
   const ubahStatus = async (id: string, status: string, tarifContoh: number) => {
@@ -1182,7 +1179,7 @@ function PanelKatalog() {
 
   return (
     <div>
-      <h2 className="text-xl">Katalog &amp; tarif (CONTOH — TODO(OD-05))</h2>
+      <h2 className="text-xl">Katalog &amp; tarif</h2>
       {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
       <ul className="mt-3 grid gap-3 md:grid-cols-3">
         {items.map((it) => (

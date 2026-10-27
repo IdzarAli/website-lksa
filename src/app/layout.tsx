@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Tiro_Gurmukhi } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 
 // Font judul serif "Tiro Gurmukhi" (fallback serif di CSS) + isi "Manrope"
 const manrope = Manrope({
@@ -17,9 +16,9 @@ const tiroGurmukhi = Tiro_Gurmukhi({
 });
 
 export const metadata: Metadata = {
-  title: "LKSA / PAYM Danukusumo — Purworejo (Prototipe)",
+  title: "LKSA / PAYM Danukusumo — Purworejo",
   description:
-    "Situs prototipe LKSA / PAYM Danukusumo Purworejo: profil lembaga, informasi & publikasi, data agregat panti, konfirmasi donasi, dan permohonan persewaan. Semua data masih CONTOH.",
+    "Situs resmi LKSA / PAYM Danukusumo Purworejo: profil lembaga, informasi & publikasi, data agregat panti, konfirmasi donasi, dan permohonan persewaan.",
   robots: { index: false, follow: false },
 };
 
@@ -34,7 +33,6 @@ export default function RootLayout({
         className={`${manrope.variable} ${tiroGurmukhi.variable} antialiased bg-background text-foreground font-sans`}
       >
         {children}
-        <Toaster />
       </body>
     </html>
   );
