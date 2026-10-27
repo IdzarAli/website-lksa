@@ -1,13 +1,13 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { CheckCircle2, FileText, HeartHandshake, Info, Landmark, QrCode, TriangleAlert, UploadCloud } from "lucide-react";
+import { CheckCircle2, FileText, HeartHandshake, Info, Landmark, TriangleAlert, UploadCloud } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { parseNominalRupiah, formatRupiah } from "@/lib/pricing";
 
 /**
  * Donasi (PRD-014, INV-1, INV-7).
- * - Panduan transfer rekening/QRIS dari site.ts (CONTOH — TODO(OD-04))
+ * - Panduan transfer rekening resmi dari site.ts
  * - Form konfirmasi: nama, email, WA, nominal, keterangan, bukti (JPG/PNG/PDF ≤5MB),
  *   persetujuan verifikasi + checkbox TERPISAH opsional leaderboard (default TIDAK dicentang)
  * - Keadaan: awal → memuat ("Mengirim konfirmasi…" & cegah kirim ulang) → gagal
@@ -185,11 +185,11 @@ export function DonasiView() {
       <p className="text-sm font-semibold uppercase tracking-wide text-cta-600">Donasi</p>
       <h1 className="mt-2 text-3xl sm:text-4xl">Panduan transfer &amp; konfirmasi donasi</h1>
 
-      {/* hero angka 150+ (angka dari data lembaga) */}
+      {/* hero angka (data lembaga) */}
       <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-brand-100 bg-brand-50 p-4">
         <div className="flex items-baseline gap-2">
-          <span className="font-display text-4xl text-brand-800">150+</span>
-          <span className="text-sm text-body-text">anak binaan didampingi lembaga</span>
+          <span className="font-display text-4xl text-brand-800">34</span>
+          <span className="text-sm text-body-text">anak binaan diasuh saat ini — daya tampung maksimal 40 anak</span>
         </div>
       </div>
 
@@ -198,7 +198,7 @@ export function DonasiView() {
         <section className="lg:col-span-2" aria-labelledby="judul-panduan">
           <h2 id="judul-panduan" className="text-2xl">Langkah berdonasi</h2>
           <ol className="mt-3 space-y-2 text-sm leading-relaxed text-body-text">
-            <li>1. Transfer ke salah satu rekening resmi lembaga di bawah.</li>
+            <li>1. Transfer ke rekening resmi lembaga di bawah.</li>
             <li>2. Simpan bukti transfer ( JPG/PNG/PDF, maksimal 5 MB).</li>
             <li>3. Isi formulir konfirmasi di samping dan unggah bukti.</li>
             <li>4. Tunggu pemeriksaan manual oleh petugas berwenang — tanpa janji waktu.</li>
@@ -220,16 +220,6 @@ export function DonasiView() {
                 <p className="mt-1 text-xs text-muted-foreground">{r.catatan}</p>
               </div>
             ))}
-            <div className="rounded-xl border border-dashed border-brand-300 bg-white p-4">
-              <p className="flex items-center gap-2 text-sm font-semibold">
-                <QrCode className="h-4 w-4 text-brand-600" aria-hidden />
-                QRIS
-              </p>
-              <div className="mt-2 flex aspect-square w-32 items-center justify-center rounded-lg border border-brand-200 bg-white" aria-hidden>
-                <QrCode className="h-24 w-24 text-ink" />
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">{siteConfig.donasi.qrisCatatan}</p>
-            </div>
           </div>
         </section>
 

@@ -1,43 +1,43 @@
 /**
  * Konfigurasi situs LKSA Danukusumo.
  *
- * Semua nilai kontak, rekening, QRIS, WA, email, dan alamat di bawah ini
- * adalah nilai sementara milik lembaga — jangan pernah hardcode nilai ini
- * di komponen lain; selalu baca dari siteConfig.
+ * Data resmi lembaga (nama, kontak, rekening) di bawah ini adalah satu-satunya
+ * sumber kebenaran — jangan pernah hardcode nilai ini di komponen lain;
+ * selalu baca dari siteConfig.
  */
 
 export const siteConfig = {
   namaLembaga: "LKSA Danukusumo",
+  namaResmi:
+    "Lembaga Kesejahteraan Sosial Anak Panti Asuhan Yatim Muhammadiyah (LKSA PAYM) Danukusumo",
   namaPendek: "Danukusumo",
-  lokasi: "Purworejo, Jawa Tengah",
+  lokasi: "Banyuurip, Purworejo, Jawa Tengah",
+  motto: "Berbakti Meraih Ridho Ilahi",
   tahunBerdiri: "2000",
+  tanggalBerdiri: "15 Juli 2000",
 
   kontak: {
-    alamat: "Jl. Danukusumo No. 123, Purworejo, Jawa Tengah",
-    email: "sekretariat@danukusumo.or.id",
-    wa: "0800-0000-0000",
-    jamLayanan: "Hari kerja, 08.00–15.00 WIB",
+    alamat:
+      "Jl. Timbangan No.9 Kledungkradenan, RT.01/RW.04, Kecamatan Banyuurip, Kabupaten Purworejo, Jawa Tengah",
+    email: "pantidanukusumo@gmail.com",
+    hp: "0852 7325 4656",
+    hpIntl: "6285273254656", // format internasional untuk tautan WhatsApp
+    instagram: "lksa_danukusumo",
+    youtube: "@lksadanukusumo",
   },
 
-  // Panduan transfer donasi — rekening resmi diterbitkan oleh pengurus lembaga.
+  // Panduan transfer donasi — rekening resmi lembaga.
   donasi: {
     catatanAwal:
-      "Donasi dilakukan dengan transfer bank/QRIS di luar website. Setelah mentransfer, kirim konfirmasi melalui formulir di bawah. Petugas berwenang akan memeriksa secara manual; tidak ada janji waktu verifikasi.",
+      "Donasi dilakukan dengan transfer bank di luar website. Setelah mentransfer, kirim konfirmasi melalui formulir di bawah. Petugas berwenang akan memeriksa secara manual; tidak ada janji waktu verifikasi.",
     rekening: [
       {
-        bank: "Bank BRI",
-        nomor: "0000 0000 0000",
-        atasNama: "Yayasan Danukusumo",
-        catatan: "Nomor rekening resmi diterbitkan oleh pengurus lembaga.",
-      },
-      {
-        bank: "Bank BCA",
-        nomor: "0000 0000 0000",
-        atasNama: "Yayasan Danukusumo",
-        catatan: "Nomor rekening resmi diterbitkan oleh pengurus lembaga.",
+        bank: "Bank BRI Cab. Purworejo",
+        nomor: "0078-01-024006-50-8",
+        atasNama: "PAYM Danukusumo",
+        catatan: "Rekening donasi resmi lembaga; dapat ditransfer dari bank mana pun.",
       },
     ],
-    qrisCatatan: "Pindai kode QRIS dengan aplikasi pembayaran Anda.",
   },
 
   // Kanal pesan keluar: adapter notifikasi, default mati (hanya tercatat di dasbor).

@@ -62,11 +62,14 @@ export function BerandaView({
         <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:py-16">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
-              Lembaga Kesejahteraan Sosial Anak · Purworejo, Jawa Tengah
+              Lembaga Kesejahteraan Sosial Anak · Banyuurip, Purworejo, Jawa Tengah
             </p>
             <h1 id="judul-hero" className="mt-3 text-3xl leading-tight sm:text-4xl md:text-5xl">
               Mendampingi anak binaan belajar, tumbuh, dan mandiri di Purworejo
             </h1>
+            <p className="mt-3 font-display text-lg text-brand-800">
+              &ldquo;Berbakti Meraih Ridho Ilahi&rdquo;
+            </p>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-body-text">
               Situs ini menyajikan profil lembaga, kabar kegiatan, dan data agregat panti.
               Donasi dilakukan lewat transfer di luar website lalu dikonfirmasi dan diperiksa
@@ -121,7 +124,7 @@ export function BerandaView({
               <GraduationCap className="h-4 w-4 text-brand-600" aria-hidden /> Pendidikan terdata
             </dt>
             <dd className="mt-2 font-display text-3xl text-brand-800">
-              {stats?.pendidikanAgregat?.total ?? "150"}
+              {stats?.pendidikanAgregat?.total ?? "34"}
             </dd>
             <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">
               Periode: {stats?.periode ?? "Tahun Ajaran 2025/2026"} · Sumber: {stats?.sumber ?? "Data internal lembaga"}
@@ -166,8 +169,8 @@ export function BerandaView({
             <div className="rounded-xl border border-brand-100 bg-white p-5">
               <h3 className="text-lg">Lokasi &amp; status lembaga</h3>
               <p className="mt-2 text-sm leading-relaxed text-body-text">
-                Berada di Purworejo, Jawa Tengah dan berdiri tahun 2000. Lembaga melayani
-                anak binaan melalui pengasuhan, pendidikan, dan pembinaan keterampilan hidup.
+                Berada di Banyuurip, Purworejo dan berdiri 15 Juli 2000. Panti berbasis semi
+                pesantren dengan asrama 10 kamar putra dan putri, daya tampung maksimal 40 anak.
               </p>
             </div>
             <div className="rounded-xl border border-brand-100 bg-white p-5">
@@ -269,7 +272,7 @@ export function BerandaView({
           <div>
             <h2 id="judul-cta" className="text-2xl text-white">Mau ikut membantu?</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-brand-100">
-              Donasi dikirim lewat transfer bank/QRIS di luar website. Setelah mentransfer, isi
+              Donasi dikirim lewat transfer bank di luar website. Setelah mentransfer, isi
               formulir konfirmasi; petugas berwenang memeriksanya secara manual. Pesan yang
               ditampilkan hanya menyatakan diterima dan menunggu pemeriksaan.
             </p>

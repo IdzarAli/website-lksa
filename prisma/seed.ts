@@ -59,34 +59,35 @@ async function main() {
   await db.staff.deleteMany();
   await db.adminUser.deleteMany();
 
-  // ---- Statistik agregat (angka berbeda per halaman sesuai sumbernya masing-masing) ----
-  // pendidikan 34+56+45+15 = 150 ; alokasi 45+30+15+10 = 100%
+  // ---- Statistik agregat (konsisten dengan data lembaga: 34 anak binaan) ----
+  // usia 1+12+9+9+3 = 34 ; pendidikan 13+9+9+3 = 34 ; alokasi 45+30+15+10 = 100%
+  // Rincian per kelompok dapat dikoreksi pengurus lewat Ruang Pengurus → Statistik.
   const usiaAgregat = {
     ringkasBeranda: {
-      nilai: "35+",
+      nilai: "34",
       sumber: "Data internal lembaga",
       periode: "Tahun Ajaran 2025/2026",
     },
     ringkasDonasi: {
-      nilai: "150+",
+      nilai: "34",
       sumber: "Data internal lembaga",
-      periode: "Tahun 2024",
+      periode: "Tahun Ajaran 2025/2026",
     },
     rincian: [
-      { label: "0–6 tahun", jumlah: 10 },
-      { label: "7–12 tahun", jumlah: 34 },
-      { label: "13–15 tahun", jumlah: 56 },
-      { label: "16–18 tahun", jumlah: 45 },
-      { label: "19 tahun ke atas", jumlah: 5 },
+      { label: "0–6 tahun", jumlah: 1 },
+      { label: "7–12 tahun", jumlah: 12 },
+      { label: "13–15 tahun", jumlah: 9 },
+      { label: "16–18 tahun", jumlah: 9 },
+      { label: "19 tahun ke atas", jumlah: 3 },
     ],
   };
   const pendidikanAgregat = {
-    total: 150,
+    total: 34,
     rincian: [
-      { label: "PAUD–SD/MI", jumlah: 34 },
-      { label: "SMP/MTs", jumlah: 56 },
-      { label: "SMA/SMK/MA", jumlah: 45 },
-      { label: "Perguruan tinggi", jumlah: 15 },
+      { label: "PAUD–SD/MI", jumlah: 13 },
+      { label: "SMP/MTs", jumlah: 9 },
+      { label: "SMA/SMK/MA", jumlah: 9 },
+      { label: "Perguruan tinggi", jumlah: 3 },
     ],
   };
   const alokasi = {

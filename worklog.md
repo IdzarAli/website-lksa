@@ -147,3 +147,22 @@ Work Log:
 Stage Summary:
 - Filter Informasi & Publikasi kini berbasis TAHUN PUBLIKASI (pengganti kategori), bekerja di sisi server (where Prisma), bisa digabung dengan pencarian kata kunci, dan filter tetap terjaga saat kembali dari detail berita.
 - Data demo kini mencakup publikasi 2025 & 2026; seluruh teks berita konsisten memakai nama halaman "Pengurus Panti".
+
+---
+Task ID: 9
+Agent: Z.ai Code (utama)
+Task: Isi data resmi lembaga yang diberikan pengguna ke seluruh situs (nama resmi, motto, visi misi, sejarah, alamat, kontak, media sosial, rekening donasi).
+
+Work Log:
+- siteConfig (sumber kebenaran tunggal): tambah namaResmi ("Lembaga Kesejahteraan Sosial Anak Panti Asuhan Yatim Muhammadiyah (LKSA PAYM) Danukusumo"), motto ("Berbakti Meraih Ridho Ilahi"), tanggalBerdiri ("15 Juli 2000"), lokasi → Banyuurip; kontak asli (Jl. Timbangan No.9 Kledungkradenan, pantidanukusumo@gmail.com, HP/WA 0852 7325 4656 + format internasional 6285273254656, IG lksa_danukusumo, YT @lksadanukusumo); rekening donasi resmi tunggal BRI Cab. Purworejo 0078-01-024006-50-8 a.n. PAYM Danukusumo; hapus field placeholder (jamLayanan, qrisCatatan, rekening fiktif BCA).
+- TentangView ditulis ulang: nama resmi sebagai subjudul, kotak motto, sejarah asli (15 Juli 2000, 10 kamar putra/putri, daya tampung 40 anak, 34 anak saat ini, pendidikan SD–PT) + strip 4 kartu fakta, visi & 6 misi ASLI lembaga (mengganti visi-misi temporer), section baru "Kontak resmi" (alamat/HP/email + IG/YT dengan tautan nyata).
+- SiteFooter: deskripsi pakai nama resmi + tanggal berdiri + motto; kontak alamat/email/HP (mailto + wa.me link); baris ikon Instagram & YouTube (tautan instagram.com/lksa_danukusumo & youtube.com/@lksadanukusumo); copyright nama resmi.
+- DonasiView: kartu rekening kini BRI asli; blok QRIS placeholder DIHAPUS (tidak ada QRIS resmi dari pengurus — menghindari QR palsu); angka "150+ anak binaan" → "34 anak binaan diasuh saat ini — daya tampung maksimal 40 anak"; teks langkah & catatan tanpa QRIS.
+- BerandaView: eyebrow hero "… · Banyuurip, Purworejo, Jawa Tengah"; motto di bawah judul hero; profil "Lokasi & status" memakai fakta asli (Banyuurip, 15 Juli 2000, semi pesantren, 10 kamar, 40 anak); CTA tanpa kata QRIS; fallback statistik 150 → 34.
+- seed.ts: statistik agregat konsisten 34 anak (usia 1+12+9+9+3; pendidikan 13+9+9+3; ringkas "34"); alokasi tetap 45/30/15/10 — rincian per kelompok adalah penempatan yang dapat dikoreksi admin via Ruang Pengurus → Statistik; re-seed DB.
+- Verifikasi browser: Tentang memuat nama resmi/motto/visi ("Generasi Rabbani")/6 misi/sejarah/sosmed/alamat; footer link benar (mailto:pantidanukusumo@gmail.com, wa.me/6285273254656, instagram.com/lksa_danukusumo, youtube.com/@lksadanukusumo); Donasi: BRI 0078-01-024006-50-8 a.n. PAYM Danukusumo, QRIS hilang; beranda motto + Banyuurip; mobile 390px keenam halaman tanpa overflow; screenshot desktop & mobile rapi; `bun run lint` bersih; dev.log 0 error; grep: nol sisa "QRIS/jamLayanan/150+"/placeholder.
+
+Stage Summary:
+- Seluruh identitas & data lembaga kini memakai data RESMI dari pengguna: nama resmi lengkap di Tentang/footer/copyright (brand pendek "LKSA Danukusumo" tetap di header), motto, visi-misi asli, sejarah, alamat, kontak, sosmed, dan rekening BRI.
+- Semua tautan kontak berfungsi (mailto, wa.me, IG, YT); QRIS placeholder dihapus; angka statistik konsisten 34 anak binaan.
+- Rincian distribusi usia/jenjang di halaman Pengurus Panti adalah penempatan awal yang bisa dikoreksi pengurus lewat dashboard (Statistik).

@@ -2,7 +2,7 @@
 
 import { siteConfig, type NavKey } from "@/config/site";
 import { LogoMark } from "@/components/site/LogoMark";
-import { MapPin, Mail, Phone, Clock3 } from "lucide-react";
+import { Instagram, MapPin, Mail, Phone, Youtube } from "lucide-react";
 
 /**
  * Footer gelap #21262C, menempel di bawah saat konten pendek (mt-auto pada
@@ -19,8 +19,8 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
             <span className="font-display text-lg">{siteConfig.namaLembaga}</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-gray-300">
-            Lembaga kesejahteraan sosial anak di {siteConfig.lokasi}. Berdiri{" "}
-            {siteConfig.tahunBerdiri}, mendampingi anak binaan belajar, tumbuh, dan mandiri.
+            {siteConfig.namaResmi} di {siteConfig.lokasi}. Berdiri{" "}
+            {siteConfig.tanggalBerdiri} — &ldquo;{siteConfig.motto}&rdquo;.
           </p>
         </div>
 
@@ -35,17 +35,45 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
             </li>
             <li className="flex items-start gap-2">
               <Mail className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-              <span>{k.email}</span>
+              <a href={`mailto:${k.email}`} className="transition-colors hover:text-white">
+                {k.email}
+              </a>
             </li>
             <li className="flex items-start gap-2">
               <Phone className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-              <span>{k.wa}</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <Clock3 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-              <span>{k.jamLayanan}</span>
+              <a
+                href={`https://wa.me/${k.hpIntl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-white"
+              >
+                HP/WA {k.hp}
+              </a>
             </li>
           </ul>
+          <div className="mt-4 flex items-center gap-3">
+            <a
+              href={`https://instagram.com/${k.instagram}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Instagram ${siteConfig.namaLembaga}: ${k.instagram}`}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 text-gray-300 transition-colors hover:border-white/40 hover:text-white"
+            >
+              <Instagram className="h-4 w-4" aria-hidden />
+            </a>
+            <a
+              href="https://www.youtube.com/@lksadanukusumo"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`YouTube ${siteConfig.namaLembaga}: ${k.youtube}`}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 text-gray-300 transition-colors hover:border-white/40 hover:text-white"
+            >
+              <Youtube className="h-4 w-4" aria-hidden />
+            </a>
+            <span className="text-xs text-gray-400">
+              IG {k.instagram} · YT {k.youtube}
+            </span>
+          </div>
         </div>
 
         <div>
@@ -69,7 +97,7 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-gray-400 sm:px-6">
-          © {new Date().getFullYear()} {siteConfig.namaLembaga}. Donasi diproses
+          © {new Date().getFullYear()} {siteConfig.namaResmi}. Donasi diproses
           dengan verifikasi manual di luar website; situs ini tidak menerima pembayaran
           langsung dan tidak mengunci jadwal persewaan.
         </div>
