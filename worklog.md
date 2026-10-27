@@ -209,3 +209,18 @@ Work Log:
 
 Stage Summary:
 - Halaman Tentang kini menampilkan section "Sarana Prasarana" dengan 4 kartu fasilitas termasuk Masjid; foto masjid tersimpan sebagai aset statis public/images/masjid.jpg (bisa diganti foto asli lembaga kapan pun, cukup timpa berkas).
+
+---
+Task ID: 13
+Agent: Z.ai Code (main)
+Task: Buat navbar header dinamis untuk responsif mobile (ganti grid 2 baris dengan menu hamburger drawer).
+
+Work Log:
+- SiteHeader ditulis ulang: mobile (<md) memakai tombol hamburger yang membuka panel menu dinamis (framer-motion AnimatePresence: slide + fade 0.22s), desktop (md+) navigasi horizontal tidak berubah.
+- Panel mobile: 6 tujuan dengan ikon (Home/Info/Newspaper/UsersRound/HeartHandshake/Wrench), item aktif ditandai latar + titik indikator, CTA merah "Kirim Konfirmasi Donasi" full-width di dasar panel (sebelumnya CTA desktop tersembunyi di mobile).
+- Perilaku dinamis: backdrop gelap klik-untuk-tutup (fixed -z-10 agar header tetap di atas), Escape menutup, body scroll-lock saat terbuka (dipulihkan saat tutup), menu auto-tutup saat berpindah halaman (state adjust saat render, bukan effect), hamburger berubah ikon Menu↔X, shadow header muncul saat halaman digulir (scroll listener + rAF).
+- Memenuhi aturan lint react-hooks/set-state-in-effect: penyesuaian aktif→tutup menu via pola state-saat-render; setBerscroll dipanggil via rAF/event, bukan sinkron di effect.
+- Verifikasi browser: hamburger tampil di mobile & tersembunyi di desktop (nav 6 item tetap); buka menu → 6 item + CTA + scrollLock hidden; klik "Tentang Kami" → hash #/tentang, menu tutup, lock lepas; Escape menutup; backdrop menutup; 390 px & 320 px tanpa overflow; console tanpa error; lint bersih.
+
+Stage Summary:
+- Navigasi mobile kini drawer dinamis yang ringkas (header hanya 1 baris di mobile, bukan 2 baris menu), dengan animasi halus, aksesibilitas (aria-expanded/controls, Escape, fokus tetap di header), dan CTA donasi selalu tersedia di semua ukuran layar.
