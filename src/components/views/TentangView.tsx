@@ -109,21 +109,25 @@ export function TentangView() {
         </div>
       </section>
 
-      {/* ===== SUASANA LEMBAGA ===== */}
-      <section className="mt-8" aria-labelledby="judul-suasana">
-        <h2 id="judul-suasana" className="text-2xl">Suasana lembaga</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* ===== SARANA PRASARANA ===== */}
+      <section className="mt-8" aria-labelledby="judul-sarana">
+        <h2 id="judul-sarana" className="text-2xl">Sarana Prasarana</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
             <img src="/images/gedung.jpg" alt="Gedung asrama lembaga" className="aspect-[4/3] w-full object-cover" />
             <figcaption className="p-3 text-sm font-medium text-body-text">Gedung asrama</figcaption>
+          </figure>
+          <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
+            <img src="/images/masjid.jpg" alt="Masjid lembaga" className="aspect-[4/3] w-full object-cover" />
+            <figcaption className="p-3 text-sm font-medium text-body-text">Masjid</figcaption>
           </figure>
           <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
             <img src="/images/belajar.jpg" alt="Ruang belajar anak binaan" className="aspect-[4/3] w-full object-cover" />
             <figcaption className="p-3 text-sm font-medium text-body-text">Ruang belajar</figcaption>
           </figure>
           <figure className="overflow-hidden rounded-xl border border-brand-100 bg-white">
-            <img src="/images/seni.jpg" alt="Kegiatan seni dan kebersamaan anak binaan" className="aspect-[4/3] w-full object-cover" />
-            <figcaption className="p-3 text-sm font-medium text-body-text">Kegiatan bersama</figcaption>
+            <img src="/images/seni.jpg" alt="Ruang kegiatan dan ekspresi anak binaan" className="aspect-[4/3] w-full object-cover" />
+            <figcaption className="p-3 text-sm font-medium text-body-text">Ruang kegiatan</figcaption>
           </figure>
         </div>
       </section>

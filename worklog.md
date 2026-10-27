@@ -196,3 +196,16 @@ Work Log:
 
 Stage Summary:
 - Copyright footer ringkas sesuai permintaan; kalimat disclaimer verifikasi manual dihapus dari footer (informasi verifikasi tetap ada di halaman Donasi).
+
+---
+Task ID: 12
+Agent: Z.ai Code (main)
+Task: Ganti section "Suasana lembaga" menjadi "Sarana Prasarana" dan tambahkan kartu Masjid.
+
+Work Log:
+- Generate foto masjid via z-ai image (prompt masjid desa Jawa Tengah, kubah+menara hijau, tanpa orang, 1152x864) → kompresi sharp ke public/images/masjid.jpg (187 KB, JPEG q82, rasio 4:3 konsisten kartu lain).
+- TentangView: judul section "Suasana lembaga" → "Sarana Prasarana" (aria-labelledby judul-sarana); tambah kartu Masjid; caption "Kegiatan bersama" → "Ruang kegiatan" (agar senada tema sarana); grid 3 → lg:grid-cols-4 untuk 4 kartu sejajar desktop (sm: 2 kolom, mobile: 1 kolom).
+- Verifikasi browser: 4 kartu termuat semua (Gedung asrama, Masjid, Ruang belajar, Ruang kegiatan); desktop 4 kolom rapi; mobile 390 px tanpa overflow; lint bersih.
+
+Stage Summary:
+- Halaman Tentang kini menampilkan section "Sarana Prasarana" dengan 4 kartu fasilitas termasuk Masjid; foto masjid tersimpan sebagai aset statis public/images/masjid.jpg (bisa diganti foto asli lembaga kapan pun, cukup timpa berkas).
