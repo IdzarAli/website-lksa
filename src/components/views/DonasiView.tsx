@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { BadgeCheck, CheckCircle2, FileText, HeartHandshake, Info, Landmark, QrCode, TriangleAlert, UploadCloud } from "lucide-react";
+import { CheckCircle2, FileText, HeartHandshake, Info, Landmark, QrCode, TriangleAlert, UploadCloud } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { parseNominalRupiah, formatRupiah } from "@/lib/pricing";
 
@@ -381,10 +381,6 @@ export function DonasiView() {
                 </tr>
               </tbody>
             </table>
-            <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <BadgeCheck className="h-3.5 w-3.5 text-brand-600" aria-hidden />
-              Daftar publik sesungguhnya hanya akan memuat donatur berstatus terverifikasi yang memberi persetujuan.
-            </p>
           </div>
         </section>
       </div>

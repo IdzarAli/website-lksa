@@ -78,3 +78,18 @@ Work Log:
 Stage Summary:
 - Situs publik dan ruang pengurus kini DUA antarmuka terpisah: publik tidak menampilkan jejak admin apa pun; admin hanya dijangkau langsung via `#/admin` (tautan private untuk petugas), tampilan mandiri dengan latar berbeda.
 - Kontrak API, skema DB, dan seluruh alur admin tetap utuh; hanya arsitektur tampilan yang dipisah.
+
+---
+Task ID: 5
+Agent: Z.ai Code (utama)
+Task: Rapikan footer & halaman donasi — hapus efek underline navigasi footer, hapus catatan privasi data di footer, hapus keterangan leaderboard donasi.
+
+Work Log:
+- SiteFooter: hapus `hover:underline` + `underline-offset-4` dari tombol navigasi footer (kini hover hanya perubahan warna teks).
+- SiteFooter: hapus kotak catatan privasi ("Data anak hanya dipublikasikan secara agregat...") beserta ikon ShieldAlert; import ShieldAlert dibuang.
+- site.ts: hapus properti `footerCatatan` (tak terpakai lagi).
+- DonasiView: hapus keterangan "Daftar publik sesungguhnya hanya akan memuat donatur berstatus terverifikasi yang memberi persetujuan." beserta ikon BadgeCheck; import dibersihkan.
+- Verifikasi browser: 6 tombol navigasi footer computed `text-decoration-line: none` (juga saat hover); footer tampil bersih tanpa kotak catatan; halaman Tentang & Donasi tetap berfungsi; leaderboard donasi tetap ada tanpa keterangan; `bun run lint` bersih.
+
+Stage Summary:
+- Footer navigasi tanpa underline; dua teks keterangan (catatan privasi footer + keterangan leaderboard) dihapus sesuai permintaan; tidak ada referensi/import menganggur tersisa.

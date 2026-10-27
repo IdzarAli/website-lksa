@@ -2,7 +2,7 @@
 
 import { siteConfig, type NavKey } from "@/config/site";
 import { LogoMark } from "@/components/site/LogoMark";
-import { MapPin, Mail, Phone, Clock3, ShieldAlert } from "lucide-react";
+import { MapPin, Mail, Phone, Clock3 } from "lucide-react";
 
 /**
  * Footer gelap #21262C, menempel di bawah saat konten pendek (mt-auto pada
@@ -21,10 +21,6 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
           <p className="mt-3 text-sm leading-relaxed text-gray-300">
             Lembaga kesejahteraan sosial anak di {siteConfig.lokasi}. Berdiri{" "}
             {siteConfig.tahunBerdiri}, mendampingi anak binaan belajar, tumbuh, dan mandiri.
-          </p>
-          <p className="mt-3 flex items-start gap-2 rounded-lg bg-white/5 p-3 text-xs leading-relaxed text-gray-300">
-            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            {siteConfig.footerCatatan}
           </p>
         </div>
 
@@ -62,7 +58,7 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
                 <button
                   type="button"
                   onClick={() => pindah(item.key)}
-                  className="rounded text-gray-300 underline-offset-4 transition-colors hover:text-white hover:underline"
+                  className="rounded text-gray-300 transition-colors hover:text-white"
                 >
                   {item.label}
                 </button>

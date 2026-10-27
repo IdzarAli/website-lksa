@@ -61,9 +61,6 @@ export const siteConfig = {
     { key: "donasi", label: "Donasi" },
     { key: "sewa", label: "Usaha Panti/Persewaan" },
   ] as const,
-
-  footerCatatan:
-    "Data anak hanya dipublikasikan secara agregat tanpa identitas individu. Bukti donasi bersifat privat dan hanya diperiksa petugas berwenang.",
 } as const;
 
 export type NavKey = (typeof siteConfig.navigasi)[number]["key"];
