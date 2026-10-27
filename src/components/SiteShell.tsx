@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { siteConfig, type NavKey } from "@/config/site";
+import type { NavKey } from "@/config/site";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { BerandaView } from "@/components/views/BerandaView";
@@ -66,17 +66,22 @@ export function SiteShell() {
     window.location.hash = "#/informasi";
   }, []);
 
-  const keAdmin = useCallback(() => {
-    window.location.hash = "#/admin";
-  }, []);
-
   // gulir ke atas saat berpindah "halaman"
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [rute]);
 
-  const aktif =
-    rute.view === "informasi" ? "informasi" : rute.view === "admin" ? (siteConfig.navigasi[0].key as string) : rute.view;
+  const aktif = rute.view === "informasi" ? "informasi" : rute.view;
+
+  // Ruang pengurus = antarmuka TERPISAH dari situs publik:
+  // tanpa header/footer situs, latar sendiri, hanya dijangkau lewat #/admin.
+  if (rute.view === "admin") {
+    return (
+      <div className="min-h-screen bg-[#F2F5F3]">
+        <AdminView kembali={() => nav("beranda")} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -96,9 +101,8 @@ export function SiteShell() {
         {rute.view === "data" && <DataPantiView />}
         {rute.view === "donasi" && <DonasiView />}
         {rute.view === "sewa" && <PersewaanView />}
-        {rute.view === "admin" && <AdminView kembali={() => nav("beranda")} />}
       </div>
-      <SiteFooter pindah={nav} bukaAdmin={keAdmin} />
+      <SiteFooter pindah={nav} />
     </div>
   );
 }

@@ -8,13 +8,7 @@ import { MapPin, Mail, Phone, Clock3, ShieldAlert } from "lucide-react";
  * Footer gelap #21262C, menempel di bawah saat konten pendek (mt-auto pada
  * wrapper shell) dan terdorong natural saat konten panjang.
  */
-export function SiteFooter({
-  pindah,
-  bukaAdmin,
-}: {
-  pindah: (tujuan: NavKey) => void;
-  bukaAdmin: () => void;
-}) {
+export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
   const k = siteConfig.kontak;
   return (
     <footer className="mt-auto bg-footer text-white">
@@ -75,13 +69,6 @@ export function SiteFooter({
               </li>
             ))}
           </ul>
-          <button
-            type="button"
-            onClick={bukaAdmin}
-            className="mt-4 rounded-lg border border-white/20 px-3 py-2 text-xs font-semibold text-gray-200 transition-colors hover:bg-white/10"
-          >
-            Masuk Ruang Pengurus (dashboard)
-          </button>
         </div>
       </div>
       <div className="border-t border-white/10">

@@ -63,3 +63,18 @@ Work Log:
 Stage Summary:
 - Dashboard admin terkonfirmasi berfungsi penuh untuk 3 peran; 2 bug diperbaiki (session restore 500; kebocoran tab lintas peran) + 3 sisa label prototipe dibersihkan.
 - Alur inti terverifikasi browser: antrean→detail→bukti→keputusan ber-alasan (donasi & sewa), notifikasi, CRUD editor, akun pengelola, restore sesi setelah reload.
+
+---
+Task ID: 4
+Agent: Z.ai Code (utama)
+Task: Pisahkan dashboard admin dari situs publik — hapus semua jejak admin dari web publik, jadikan ruang pengurus antarmuka mandiri.
+
+Work Log:
+- SiteFooter: hapus tombol "Masuk Ruang Pengurus (dashboard)" + prop `bukaAdmin` — situs publik kini nol tautan admin.
+- SiteShell: cabang khusus route admin — `#/admin` dirender LAYAR PENUH TERPISAH (tanpa SiteHeader/SiteFooter, wrapper `min-h-screen` latar khusus #F2F5F3); skip-link & shell publik hanya untuk route publik; hapus callback `keAdmin` + hack `aktif` untuk admin; rapikan import (`siteConfig` tak terpakai dihapus).
+- AdminView tidak berubah — sudah mandiri: layar login kartu terpusat + "← Kembali ke situs publik"; dashboard punya identitas "RUANG PENGURUS" + "Lihat situs publik" + "Keluar".
+- Verifikasi browser: situs publik (desktop+mobile 390px) bebas kata "pengurus" (yang tersisa hanya halaman publik "Dashboard Informasi & Data Panti" — memang konten publik); `#/admin` → header/footer publik TIDAK dirender, latar rgb(242,245,243), login kartu terpusat; login verifikator → dashboard 3 tab berfungsi; "Lihat situs publik" kembali ke beranda dengan header+footer utuh; tanpa scroll horizontal mobile; footer sticky publik utuh; `bun run lint` bersih; dev.log tanpa error.
+
+Stage Summary:
+- Situs publik dan ruang pengurus kini DUA antarmuka terpisah: publik tidak menampilkan jejak admin apa pun; admin hanya dijangkau langsung via `#/admin` (tautan private untuk petugas), tampilan mandiri dengan latar berbeda.
+- Kontrak API, skema DB, dan seluruh alur admin tetap utuh; hanya arsitektur tampilan yang dipisah.
