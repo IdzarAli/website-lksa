@@ -62,11 +62,21 @@ export function AdminView({ kembali }: { kembali: () => void }) {
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         setSesi(d ? { nama: d.nama, role: d.role, email: d.email } : null);
-        if (d?.role === "editor") setTab("berita");
-        else if (d?.role === "pengelola") setTab("akun");
       })
       .catch(() => setSesi(null));
   }, []);
+
+  // tab aktif diturunkan dari peran sesi — panel milik peran lain tak pernah tampil
+  const tabAktif = (() => {
+    if (!sesi) return tab;
+    const izin: Record<Sesi["role"], string[]> = {
+      verifikator: ["antrean-donasi", "antrean-sewa", "notifikasi"],
+      editor: ["berita", "pengumuman", "statistik", "pengasuh", "katalog"],
+      pengelola: ["akun", "notifikasi"],
+    };
+    const daftar = izin[sesi.role] ?? [];
+    return daftar.includes(tab) ? tab : daftar[0] ?? tab;
+  })();
 
   if (sesi === undefined) {
     return (
@@ -138,11 +148,11 @@ export function AdminView({ kembali }: { kembali: () => void }) {
           <button
             key={t.key}
             role="tab"
-            aria-selected={tab === t.key}
+            aria-selected={tabAktif === t.key}
             type="button"
             onClick={() => setTab(t.key)}
             className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-              tab === t.key ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"
+              tabAktif === t.key ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"
             }`}
           >
             <t.ikon className="h-4 w-4" aria-hidden />
@@ -152,15 +162,15 @@ export function AdminView({ kembali }: { kembali: () => void }) {
       </div>
 
       <div className="mt-6">
-        {tab === "antrean-donasi" && <AntreanDonasi />}
-        {tab === "antrean-sewa" && <AntreanSewa />}
-        {tab === "notifikasi" && <PanelNotifikasi />}
-        {tab === "berita" && <PanelBerita />}
-        {tab === "pengumuman" && <PanelPengumuman />}
-        {tab === "statistik" && <PanelStatistik />}
-        {tab === "pengasuh" && <PanelPengasuh />}
-        {tab === "katalog" && <PanelKatalog />}
-        {tab === "akun" && <PanelAkun />}
+        {tabAktif === "antrean-donasi" && <AntreanDonasi />}
+        {tabAktif === "antrean-sewa" && <AntreanSewa />}
+        {tabAktif === "notifikasi" && <PanelNotifikasi />}
+        {tabAktif === "berita" && <PanelBerita />}
+        {tabAktif === "pengumuman" && <PanelPengumuman />}
+        {tabAktif === "statistik" && <PanelStatistik />}
+        {tabAktif === "pengasuh" && <PanelPengasuh />}
+        {tabAktif === "katalog" && <PanelKatalog />}
+        {tabAktif === "akun" && <PanelAkun />}
       </div>
     </main>
   );
@@ -679,9 +689,9 @@ function PanelNotifikasi() {
 
   return (
     <div>
-      <h2 className="text-xl">Notifikasi pengajuan (perlu ditinjau)</h2>
+      <h2 className="text-xl">Notifikasi pengajuan</h2>
       <p className="text-sm text-muted-foreground">
-        Daftar TIDAK menampilkan bukti atau data pribadi berlebih. Kanal WA/email adalah mock dan default mati (OD-10).
+        Daftar hanya menampilkan ringkasan pengajuan — tanpa bukti transfer maupun data pribadi yang berlebihan.
       </p>
       <div className="mt-3 flex flex-wrap items-end gap-3">
         <div>
@@ -812,7 +822,7 @@ function PanelBerita() {
   return (
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="lg:col-span-3">
-        <h2 className="text-xl">Berita (alur persetujuan INV-6)</h2>
+        <h2 className="text-xl">Berita</h2>
         {galat && <p className="mt-2 rounded-lg border border-cta-100 bg-cta-50 p-2 text-sm text-cta-700" role="alert">{galat}</p>}
         {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
         <ul className="mt-3 max-h-[32rem] space-y-2 overflow-y-auto scroll-area-thin">
@@ -1235,7 +1245,7 @@ function PanelAkun() {
         Akun &amp; peran (hanya pengelola)
       </h2>
       <p className="text-sm text-muted-foreground">
-        Verifikator TIDAK dapat mengubah hak akses — server menolak (spesifikasi §4). Akun demo WAJIB diganti sebelum produksi.
+        Perubahan peran dan kata sandi hanya dapat dilakukan dari panel ini; hak akses selalu diperiksa ulang di server.
       </p>
       {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
       <ul className="mt-3 max-h-96 space-y-2 overflow-y-auto scroll-area-thin">

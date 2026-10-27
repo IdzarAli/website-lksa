@@ -46,3 +46,20 @@ Stage Summary:
 - Seluruh foto kini nyata (aset AI di public/images/) — tidak ada lagi kotak placeholder bergaris.
 - Proyeksi file berkurang drastis (~50 file dihapus); struktur src kini hanya berisi kode yang benar-benar dipakai: site (4), views (7), SiteShell, lib (11), config, app (layout/page + API).
 - Kontrak API, skema DB, dan aturan INV-1..8 tetap utuh; hanya teks tampilan yang dirapikan.
+
+---
+Task ID: 3
+Agent: Z.ai Code (utama)
+Task: Jawab "dashboard admin apakah sudah dibuat" — verifikasi menyeluruh dashboard admin via browser; perbaiki bug yang ditemukan.
+
+Work Log:
+- Konfirmasi dashboard admin SUDAH ada (Task 1): AdminView 1.274 baris, 3 peran (verifikator/editor/pengelola), API admin lengkap.
+- QA browser menemukan bug 1 — `/api/admin/session` HTTP 500 `[api] status is not defined`: pola `!sesi || status !== 200` (copy-paste dari route lain yang mendapat `status` dari `wajibPeran()`) diterapkan pada route yang memakai `getSesi()` (tanpa `status`). Efek: restore sesi selalu gagal → reload halaman admin selalu balik ke form login. Fix: `if (!sesi)` saja; curl login→session kini 200.
+- QA menemukan bug 2 (kondisi lampau tersembunyi oleh bug 1): state `tab` tidak direset saat ganti akun — logout editor (tab aktif "katalog") lalu login pengelola → panel Katalog milik editor ikut tampil. Server aman (pengelola hanya boleh baca katalog; PATCH tetap editor-only), tapi UX bocor. Fix: `tabAktif` DERIVED dari peran sesi saat render (izin per peran; fallback ke tab awal peran) — tanpa effect tambahan; lolos aturan `react-hooks/set-state-in-effect`.
+- Bersihkan 3 sisa label prototipe yang lolos Task 2 (semua di tampilan): "Notifikasi pengajuan (perlu ditinjau)" + catatan "(OD-10)/mock" → netral; heading "Berita (alur persetujuan INV-6)" → "Berita"; catatan PanelAkun "(spesifikasi §4)/Akun demo WAJIB diganti" → netral.
+- Verifikasi e2e (browser + curl): login 3 peran; antrean donasi 3 baris; detail DON-DEMO-0001 → keputusan terverifikasi + alasan tersimpan → dialog tutup + daftar refresh; buka bukti privat PDF via route terautentikasi; antrean sewa SEW-DEMO-0001 diajukan→ditinjau; notifikasi tandai dibaca (3→2); kirim-ulang memang kondisional (hanya gagal-kirim); editor 5 tab (Berita/Pengumuman/Statistik/Pengasuh/Katalog) render penuh; pengelola Akun & Peran (3 akun + pemilih peran); regresi ganti akun LULUS (editor→katalog→logout→pengelola → panel Akun, tanpa bocor); situs publik normal; footer sticky; `bun run lint` bersih; dev.log tanpa error.
+- Catatan lingkungan: input mouse CDP agent-browser mati setelah beberapa klik (eval/screenshot tetap jalan; restart pun hanya sesaat) — verifikasi interaksi lanjutan memakai klik DOM programatik (event nyata, memicu handler React yang sama); bukan bug aplikasi.
+
+Stage Summary:
+- Dashboard admin terkonfirmasi berfungsi penuh untuk 3 peran; 2 bug diperbaiki (session restore 500; kebocoran tab lintas peran) + 3 sisa label prototipe dibersihkan.
+- Alur inti terverifikasi browser: antrean→detail→bukti→keputusan ber-alasan (donasi & sewa), notifikasi, CRUD editor, akun pengelola, restore sesi setelah reload.

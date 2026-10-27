@@ -5,7 +5,7 @@ import { getSesi } from "@/lib/auth";
 export async function GET() {
   return amankan(async () => {
     const sesi = await getSesi();
-    if (!sesi || status !== 200) return jsonGagal(401, "Belum masuk");
+    if (!sesi) return jsonGagal(401, "Belum masuk");
     return jsonOk({ nama: sesi.nama, role: sesi.role, email: sesi.email });
   });
 }
