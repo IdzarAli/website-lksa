@@ -21,7 +21,7 @@ interface StatsItem {
   usiaAgregat?: { rincian?: Kelompok[] };
   pendidikanAgregat?: { total?: number; rincian?: Kelompok[] };
 }
-interface StaffItem { id: string; nama: string; peran: string }
+interface StaffItem { id: string; nama: string; peran: string; foto: string | null }
 
 export function DataPantiView() {
   const [stats, setStats] = useState<StatsItem | null>(null);
@@ -47,12 +47,12 @@ export function DataPantiView() {
       <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
         Pengurus Panti
       </p>
-      <h1 className="mt-2 text-3xl sm:text-4xl">Data agregat lembaga</h1>
+      <h1 className="mt-2 text-3xl sm:text-4xl">Statistik Panti</h1>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-body-text">
-        Semua angka pada halaman ini adalah data AGREGAT — tidak memuat nama, alamat,
-        atau identitas rinci anak. Periode: <strong>{stats?.periode ?? "Tahun Ajaran 2025/2026"}</strong> ·
-        Sumber: <strong>{stats?.sumber ?? "Data internal lembaga"}</strong>. Angka grafik selalu disandingkan
-        dengan tabel yang sama nilainya.
+        Angka yang ditampilkan merupakan data agregat lembaga — tanpa nama, alamat, maupun identitas
+        rinci anak. Periode: <strong>{stats?.periode ?? "Tahun Ajaran 2025/2026"}</strong> ·
+        Sumber: <strong>{stats?.sumber ?? "Data internal lembaga"}</strong>. Grafik dan tabel menggunakan
+        angka yang sama untuk memudahkan pembacaan.
       </p>
 
       {/* ===== USIA ===== */}
@@ -153,9 +153,21 @@ export function DataPantiView() {
           <HeartPulse className="h-5 w-5 text-brand-600" aria-hidden />
           Direktori pengasuh
         </h2>
-        <p className="mt-2 text-sm text-body-text">
-          Profil hanya menampilkan pengasuh yang telah memberikan persetujuan tayang.
-        </p>
+        <div className="mt-3 grid items-center gap-5 rounded-2xl bg-brand-50/70 p-4 sm:grid-cols-[minmax(0,1fr)_14rem] sm:p-5">
+          <p className="text-sm text-body-text">
+            Profil hanya menampilkan pengasuh yang telah memberikan persetujuan tayang.
+          </p>
+          <figure className="mx-auto w-full max-w-52 text-center">
+            <img
+              src="/images/illustrations/pengurus.svg"
+              alt="Ilustrasi umum tim pengurus panti"
+              className="h-36 w-full object-contain"
+            />
+            <figcaption className="mt-1 text-xs font-medium text-muted-foreground">
+              Ilustrasi pengurus, bukan foto personel
+            </figcaption>
+          </figure>
+        </div>
         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {staff.length === 0 && (
             <li className="rounded-xl border border-brand-100 bg-white p-4 text-sm text-muted-foreground">
@@ -164,10 +176,22 @@ export function DataPantiView() {
           )}
           {staff.map((s) => (
             <li key={s.id} className="rounded-xl border border-brand-100 bg-white p-4">
-              <div className="flex items-center gap-3">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-100 font-display text-lg text-brand-800" aria-hidden>
-                  {s.nama.charAt(0)}
-                </span>
+              <div className="flex items-center gap-4">
+                {s.foto ? (
+                  <div className="relative h-24 w-24 shrink-0">
+                    <span className="absolute inset-2 rounded-full bg-brand-200/70 blur-xl" aria-hidden />
+                    <img
+                      src={s.foto}
+                      alt={`Foto ${s.nama}`}
+                      loading="lazy"
+                      className="relative z-10 h-full w-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-100 font-display text-lg text-brand-800" aria-hidden>
+                    {s.nama.charAt(0)}
+                  </span>
+                )}
                 <div>
                   <h3 className="text-base font-semibold">{s.nama}</h3>
                   <p className="text-sm text-muted-foreground">{s.peran}</p>

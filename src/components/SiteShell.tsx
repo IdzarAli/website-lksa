@@ -73,12 +73,13 @@ export function SiteShell() {
 
   const aktif = rute.view === "informasi" ? "informasi" : rute.view;
 
-  // Ruang pengurus = antarmuka TERPISAH dari situs publik:
-  // tanpa header/footer situs, latar sendiri, hanya dijangkau lewat #/admin.
+  // Dashboard admin terpisah dari situs publik: tanpa header/footer situs.
   if (rute.view === "admin") {
     return (
-      <div className="min-h-screen bg-[#F2F5F3]">
-        <AdminView kembali={() => nav("beranda")} />
+      <div className="flex min-h-screen flex-col bg-background">
+        <div className="flex-1">
+          <AdminView kembali={() => nav("beranda")} />
+        </div>
       </div>
     );
   }

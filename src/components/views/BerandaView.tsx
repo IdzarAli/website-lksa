@@ -29,7 +29,7 @@ interface ArtikelRingkas {
   publishedAt: string | null;
 }
 
-interface StaffItem { id: string }
+interface StaffItem { id: string; nama: string; peran: string; foto: string | null }
 
 export function BerandaView({
   pindah,
@@ -66,12 +66,22 @@ export function BerandaView({
       : "34");
   const nilaiAlumni = stats?.usiaAgregat?.ringkasAlumni?.nilai ?? "150+";
   const nilaiPengasuh = staff ? String(staff.length) : "3";
+  const fotoKepala = staff?.find((item) => item.peran.toLocaleLowerCase().includes("kepala pengasuhan"))?.foto;
 
   return (
     <main id="konten">
       {/* ===== HERO ===== */}
-      <section className="border-b border-brand-100 bg-brand-50" aria-labelledby="judul-hero">
-        <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:py-16">
+      <section className="relative overflow-hidden border-b border-brand-100 bg-brand-50" aria-labelledby="judul-hero">
+        <div className="absolute inset-0">
+          <img
+            src="/images/hero.jpg"
+            alt=""
+            aria-hidden
+            className="h-full w-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent" />
+        </div>
+        <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:py-16">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">
               Lembaga Kesejahteraan Sosial Anak · Banyuurip, Purworejo, Jawa Tengah
@@ -106,11 +116,6 @@ export function BerandaView({
               </button>
             </div>
           </div>
-          <img
-            src="/images/hero.jpg"
-            alt="Anak binaan belajar bersama di ruang bersama lembaga"
-            className="aspect-[4/3] w-full rounded-2xl border border-brand-100 object-cover shadow-sm"
-          />
         </div>
       </section>
 
@@ -161,23 +166,23 @@ export function BerandaView({
         <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
           <h2 id="judul-profil" className="text-2xl">Profil singkat</h2>
           <div className="mt-4 grid gap-6 md:grid-cols-3">
-            <div className="rounded-xl border border-brand-100 bg-white p-5">
+            <div className="space-y-2">
               <h3 className="text-lg">Lokasi &amp; status lembaga</h3>
-              <p className="mt-2 text-sm leading-relaxed text-body-text">
+              <p className="text-sm leading-relaxed text-body-text">
                 Berada di Banyuurip, Purworejo dan berdiri 15 Juli 2000. Panti berbasis semi
                 pesantren dengan asrama 10 kamar putra dan putri, daya tampung maksimal 40 anak.
               </p>
             </div>
-            <div className="rounded-xl border border-brand-100 bg-white p-5">
+            <div className="space-y-2">
               <h3 className="text-lg">Pendampingan harian</h3>
-              <p className="mt-2 text-sm leading-relaxed text-body-text">
+              <p className="text-sm leading-relaxed text-body-text">
                 Anak binaan didampingi pengasuh tinggal dan pendamping belajar dalam jadwal
                 harian terstruktur: sekolah, belajar sore, keterampilan, dan ibadah.
               </p>
             </div>
-            <div className="rounded-xl border border-brand-100 bg-white p-5">
+            <div className="space-y-2">
               <h3 className="text-lg">Keterbukaan data</h3>
-              <p className="mt-2 text-sm leading-relaxed text-body-text">
+              <p className="text-sm leading-relaxed text-body-text">
                 Data anak hanya ditampilkan sebagai agregat tanpa nama, alamat, atau identitas
                 rinci. Bukti donasi bersifat privat dan hanya dibuka petugas berwenang.
               </p>
@@ -189,13 +194,29 @@ export function BerandaView({
       {/* ===== SAMBUTAN ===== */}
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6" aria-labelledby="judul-sambutan">
         <div className="rounded-xl border border-brand-100 bg-white p-5 sm:p-6">
-          <h2 id="judul-sambutan" className="text-2xl">Sambutan Kepala Pengasuhan</h2>
-          <p className="mt-3 text-sm leading-relaxed text-body-text">
-            &ldquo;Assalamualaikum. Kami mengucapkan terima kasih kepada para donatur dan relawan
-            yang telah mendampingi anak-anak binaan kami. Setiap bantuan yang masuk kami kelola
-            dengan pemeriksaan manual dan pencatatan yang dapat dipertanggungjawabkan. Silakan
-            hubungi sekretariat untuk pertanyaan seputar lembaga.&rdquo;
-          </p>
+          <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_15rem]">
+            <div>
+              <h2 id="judul-sambutan" className="text-2xl">Sambutan Kepala Pengasuhan</h2>
+              <p className="mt-3 text-sm leading-relaxed text-body-text">
+                &ldquo;Assalamualaikum. Kami mengucapkan terima kasih kepada para donatur dan relawan
+                yang telah mendampingi anak-anak binaan kami. Setiap bantuan yang masuk kami kelola
+                dengan pemeriksaan manual dan pencatatan yang dapat dipertanggungjawabkan. Silakan
+                hubungi sekretariat untuk pertanyaan seputar lembaga.&rdquo;
+              </p>
+            </div>
+            <figure className="relative mx-auto w-48 text-center md:w-full">
+              <span className="absolute inset-x-5 bottom-8 h-28 rounded-full bg-brand-200/70 blur-2xl" aria-hidden />
+              <img
+                src={fotoKepala || "/images/illustrations/kepala-pengasuhan.svg"}
+                alt={fotoKepala ? "Foto Kepala Pengasuhan LKSA Danukusumo" : "Ilustrasi Kepala Pengasuhan"}
+                loading={fotoKepala ? "lazy" : "eager"}
+                className="relative z-10 mx-auto h-56 w-full object-contain"
+              />
+              <figcaption className="relative z-10 mt-2 text-sm font-semibold text-brand-800">
+                {fotoKepala ? "Kepala Pengasuhan" : "Ilustrasi Kepala Pengasuhan"}
+              </figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 

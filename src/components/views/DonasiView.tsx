@@ -183,15 +183,7 @@ export function DonasiView() {
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <p className="text-sm font-semibold uppercase tracking-wide text-cta-600">Donasi</p>
-      <h1 className="mt-2 text-3xl sm:text-4xl">Panduan transfer &amp; konfirmasi donasi</h1>
-
-      {/* hero angka (data lembaga) */}
-      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-brand-100 bg-brand-50 p-4">
-        <div className="flex items-baseline gap-2">
-          <span className="font-display text-4xl text-brand-800">34</span>
-          <span className="text-sm text-body-text">anak binaan diasuh saat ini — daya tampung maksimal 40 anak</span>
-        </div>
-      </div>
+      <h1 className="mt-2 text-3xl sm:text-4xl">Investasi Terbaik untuk Senyum &amp; Masa Depan Mereka</h1>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
         {/* ===== PANDUAN TRANSFER ===== */}

@@ -30,6 +30,12 @@ const IKON_JENIS = {
   tenda: TentTree,
 } as const;
 
+const ILUSTRASI_JENIS: Record<ItemSewa["jenis"], string> = {
+  aula: "/images/illustrations/aula.svg",
+  kursi: "/images/illustrations/kursi.svg",
+  tenda: "/images/illustrations/tenda.svg",
+};
+
 export function PersewaanView() {
   const [items, setItems] = useState<ItemSewa[]>([]);
   const [jenis, setJenis] = useState<"aula" | "kursi" | "tenda">("aula");
@@ -186,8 +192,8 @@ export function PersewaanView() {
             {referensi}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-body-text">
-            Permohonan Anda belum merupakan booking dan tidak mengunci jadwal. Petugas
-            akan menghubungi Anda untuk pemeriksaan lanjutan; tidak ada pembayaran pada tahap ini.
+            Permohonan ini bukan booking. Jadwal belum dikunci dan tidak ada pembayaran.
+            Petugas akan menghubungi Anda untuk pemeriksaan lanjutan.
           </p>
           {duplikat && (
             <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
@@ -213,8 +219,8 @@ export function PersewaanView() {
       <p className="mt-3 flex max-w-3xl items-start gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm leading-relaxed text-body-text">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />
         <span>
-          Halaman ini menerima <strong>permohonan</strong>, bukan booking: jadwal tidak dikunci dan
-          tidak ada pembayaran di sini. Pengurus akan menghubungi Anda untuk pemeriksaan lanjutan.
+          Halaman ini untuk <strong>permohonan</strong>, bukan booking. Jadwal belum dikunci dan
+          belum ada pembayaran. Pengurus akan menghubungi Anda untuk pemeriksaan lanjutan.
         </span>
       </p>
 
@@ -236,6 +242,16 @@ export function PersewaanView() {
                   aktif ? "border-brand-600 bg-brand-50" : "border-brand-100 bg-white hover:bg-brand-50/50"
                 }`}
               >
+                <div className="relative mb-3 h-36 rounded-lg bg-brand-50/70 px-4">
+                  <img
+                    src={ILUSTRASI_JENIS[it.jenis]}
+                    alt={`Ilustrasi ${it.nama}`}
+                    className="photo-cutout-float h-full w-full object-contain"
+                  />
+                  <span className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-brand-700">
+                    Ilustrasi
+                  </span>
+                </div>
                 <Ik className={`h-6 w-6 ${aktif ? "text-brand-700" : "text-brand-500"}`} aria-hidden />
                 <h3 className="mt-2 text-base font-semibold">{it.nama}</h3>
                 <p className="mt-1 text-sm text-body-text">
@@ -266,7 +282,7 @@ export function PersewaanView() {
             <form className="mt-4 space-y-4" onSubmit={kirim} noValidate>
               {/* jadwal — hanya permohonan; tidak mengunci ketersediaan */}
               <fieldset className="rounded-lg border border-border p-4">
-                <legend className="px-1 text-sm font-semibold">Jadwal (permohonan, bukan booking)</legend>
+                <legend className="px-1 text-sm font-semibold">Jadwal (permohonan, tidak mengunci ketersediaan)</legend>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="sew-mulai" className="mb-1 flex items-center gap-1.5 text-sm font-semibold">

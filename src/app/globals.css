@@ -136,6 +136,20 @@
   }
 }
 
+/* Efek melayang untuk foto cut-out PNG/WebP transparan; tetap statis bagi reduced motion. */
+.photo-cutout-float {
+  transform-origin: center bottom;
+  animation: photo-cutout-float 5.5s ease-in-out infinite;
+  filter: drop-shadow(0 12px 18px rgb(35 97 81 / 18%));
+}
+@keyframes photo-cutout-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-cutout-float { animation: none; }
+}
+
 /* Gaya scrollbar daftar panjang (max-h + overflow) */
 .scroll-area-thin {
   scrollbar-width: thin;
@@ -150,4 +164,12 @@
 }
 .scroll-area-thin::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Sembunyikan scrollbar untuk nav horizontal mobile */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

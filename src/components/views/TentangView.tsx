@@ -29,9 +29,6 @@ export function TentangView() {
           <p className="font-display text-xl text-brand-800 sm:text-2xl">
             &ldquo;{siteConfig.motto}&rdquo;
           </p>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Motto lembaga
-          </p>
         </div>
       </div>
 

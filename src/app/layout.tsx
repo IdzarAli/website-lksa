@@ -16,7 +16,7 @@ const tiroGurmukhi = Tiro_Gurmukhi({
 });
 
 export const metadata: Metadata = {
-  title: "LKSA Danukusumo — Purworejo",
+  title: "LKSA Danukusumo",
   description:
     "Situs resmi LKSA Danukusumo Purworejo: profil lembaga, informasi & publikasi, data agregat panti, konfirmasi donasi, dan permohonan persewaan.",
   robots: { index: false, follow: false },

@@ -2,20 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  Bell, FileText, FolderOpen, Lock, LogOut, Megaphone, RefreshCcw, Send, ShieldCheck,
-  Table2, UserCog, Users, Wrench, Download, XCircle, CheckCircle2, ImageIcon,
+  Bell, FileText, FolderOpen, Lock, LogOut, RefreshCcw, Send,
+  Table2, Users, Wrench, Download, XCircle, CheckCircle2, ImageIcon,
 } from "lucide-react";
-import { StatusBadge } from "@/components/site/StatusBadge";
 import { LogoMark } from "@/components/site/LogoMark";
 import { formatRupiah, formatTanggal } from "@/lib/pricing";
 
 /**
- * Ruang Pengurus (OD-09, OD-12). Peran dicek DI SERVER pada setiap route
- * (klien hanya menyembunyikan/menampilkan menu).
- * Peran: editor (konten) · verifikator (antrean + keputusan) · pengelola (akun).
- * Akun demo sintetis — WAJIB GANTI SEBELUM PRODUKSI.
+ * Dashboard LKSA Danukusumo. Satu akun admin mengelola seluruh konten, donasi, persewaan, dan pengumuman.
  */
-interface Sesi { nama: string; role: "editor" | "verifikator" | "pengelola"; email: string }
+interface Sesi { nama: string; role: "admin"; email: string }
 interface Donasi {
   id: string; referensi: string; nama: string; email: string; wa: string;
   nominalRupiah: number; keterangan: string | null; receiptKey: string;
@@ -35,24 +31,14 @@ interface Notifikasi {
 }
 interface Artikel {
   id: string; slug: string; judul: string; kategori: string; status: string;
-  publishedAt: string | null; mediaAlt: string | null; publicationConsent: boolean;
+  publishedAt: string | null; mediaAlt: string | null;
   ringkasan?: string; isi?: string; mediaUrl?: string | null;
 }
 interface Pengumuman {
   id: string; judul: string; isi: string; kategori: string; prioritas: string; status: string; publishedAt: string | null;
 }
-interface Pengasuh { id: string; nama: string; peran: string; publicationConsent: boolean; status: string }
-interface KatalogItem { id: string; nama: string; jenis: string; satuan: string; tarifContoh: number; status: string }
-interface Akun { id: string; email: string; nama: string; role: string }
-
-// mesin status untuk pilihan UI (harus sama dengan server)
-const OPSI_STATUS_DONASI: Record<string, string[]> = {
-  "menunggu-verifikasi": ["terverifikasi", "perlu-perbaikan", "ditolak"],
-};
-const OPSI_STATUS_SEWA: Record<string, string[]> = {
-  diajukan: ["ditinjau"],
-  ditinjau: ["disetujui", "perlu-perbaikan", "ditolak"],
-};
+interface Pengasuh { id: string; nama: string; peran: string; status: string }
+interface KatalogItem { id: string; nama: string; jenis: string; satuan: string; tarifContoh: number; status: string; foto: string }
 
 export function AdminView({ kembali }: { kembali: () => void }) {
   const [sesi, setSesi] = useState<Sesi | null | undefined>(undefined);
@@ -67,17 +53,8 @@ export function AdminView({ kembali }: { kembali: () => void }) {
       .catch(() => setSesi(null));
   }, []);
 
-  // tab aktif diturunkan dari peran sesi — panel milik peran lain tak pernah tampil
-  const tabAktif = (() => {
-    if (!sesi) return tab;
-    const izin: Record<Sesi["role"], string[]> = {
-      verifikator: ["antrean-donasi", "antrean-sewa", "notifikasi"],
-      editor: ["berita", "pengumuman", "statistik", "pengasuh", "katalog"],
-      pengelola: ["akun", "notifikasi"],
-    };
-    const daftar = izin[sesi.role] ?? [];
-    return daftar.includes(tab) ? tab : daftar[0] ?? tab;
-  })();
+  // semua tab tersedia untuk admin
+  const tabAktif = tab;
 
   if (sesi === undefined) {
     return (
@@ -91,41 +68,19 @@ export function AdminView({ kembali }: { kembali: () => void }) {
   }
 
   const tabs = [
-    ...(sesi.role === "verifikator" ? [
-      { key: "antrean-donasi", label: "Antrean Donasi", ikon: Download },
-      { key: "antrean-sewa", label: "Antrean Persewaan", ikon: FolderOpen },
-      { key: "notifikasi", label: "Notifikasi", ikon: Bell },
-    ] : []),
-    ...(sesi.role === "editor" ? [
-      { key: "berita", label: "Berita", ikon: FileText },
-      { key: "pengumuman", label: "Pengumuman", ikon: Megaphone },
-      { key: "statistik", label: "Statistik", ikon: Table2 },
-      { key: "pengasuh", label: "Pengasuh", ikon: Users },
-      { key: "katalog", label: "Katalog & Tarif", ikon: Wrench },
-    ] : []),
-    ...(sesi.role === "pengelola" ? [
-      { key: "akun", label: "Akun & Peran", ikon: UserCog },
-      { key: "notifikasi", label: "Notifikasi", ikon: Bell },
-    ] : []),
+    { key: "antrean-donasi", label: "Donasi", ikon: Download },
+    { key: "usaha-panti", label: "Usaha Panti", ikon: Wrench },
+    { key: "notifikasi", label: "Notifikasi", ikon: Bell },
+    { key: "informasi-panti", label: "Informasi Panti", ikon: FileText },
+    { key: "statistik", label: "Statistik", ikon: Table2 },
+    { key: "pengasuh", label: "Pengasuh", ikon: Users },
   ];
 
   return (
     <main id="konten" className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-brand-700">
-            <ShieldCheck className="h-4 w-4" aria-hidden />
-            Ruang Pengurus
-          </p>
-          <h1 className="mt-1 text-2xl sm:text-3xl">{sesi.nama}</h1>
-          <p className="text-sm text-muted-foreground">
-            Peran: <strong>{sesi.role}</strong> · {sesi.email}
-          </p>
-        </div>
+        <h1 className="text-2xl sm:text-3xl">Dashboard</h1>
         <div className="flex gap-2">
-          <button type="button" onClick={kembali} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold hover:bg-muted">
-            Lihat situs publik
-          </button>
           <button
             type="button"
             onClick={async () => {
@@ -139,10 +94,6 @@ export function AdminView({ kembali }: { kembali: () => void }) {
           </button>
         </div>
       </div>
-
-      <p className="mt-3 rounded-lg border border-brand-100 bg-brand-50 p-3 text-xs leading-relaxed text-body-text">
-        Hak akses diperiksa ulang di server pada setiap permintaan.
-      </p>
 
       <div role="tablist" aria-label="Menu pengurus" className="mt-4 flex flex-wrap gap-2 border-b border-border pb-2">
         {tabs.map((t) => (
@@ -164,14 +115,11 @@ export function AdminView({ kembali }: { kembali: () => void }) {
 
       <div className="mt-6">
         {tabAktif === "antrean-donasi" && <AntreanDonasi />}
-        {tabAktif === "antrean-sewa" && <AntreanSewa />}
+        {tabAktif === "usaha-panti" && <PanelUsahaPanti />}
         {tabAktif === "notifikasi" && <PanelNotifikasi />}
-        {tabAktif === "berita" && <PanelBerita />}
-        {tabAktif === "pengumuman" && <PanelPengumuman />}
+        {tabAktif === "informasi-panti" && <PanelInformasiPanti />}
         {tabAktif === "statistik" && <PanelStatistik />}
         {tabAktif === "pengasuh" && <PanelPengasuh />}
-        {tabAktif === "katalog" && <PanelKatalog />}
-        {tabAktif === "akun" && <PanelAkun />}
       </div>
     </main>
   );
@@ -214,11 +162,11 @@ function FormulirLogin({ padaSukses, kembali }: { padaSukses: (s: Sesi) => void;
           <LogoMark className="h-20 w-20" />
           <h1 className="mt-3 flex items-center gap-2 text-2xl">
             <Lock className="h-5 w-5 text-brand-600" aria-hidden />
-            Masuk Ruang Pengurus
+            Masuk Dashboard
           </h1>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
-          Untuk petugas lembaga. Peran menentukan menu yang tersedia.
+          Masukkan email dan password untuk mengelola situs.
         </p>
         {galat && (
           <p className="mt-3 rounded-lg border border-cta-100 bg-cta-50 p-3 text-sm text-cta-700" role="alert">{galat}</p>
@@ -236,10 +184,6 @@ function FormulirLogin({ padaSukses, kembali }: { padaSukses: (s: Sesi) => void;
             {memuat ? "Memeriksa…" : "Masuk"}
           </button>
         </form>
-        <div className="mt-4 rounded-lg border border-brand-100 bg-brand-50 p-3 text-xs leading-relaxed text-body-text">
-          <strong>Akun demo:</strong>
-          <br />editor@danukusumo.or.id / editor123 · verifikator@danukusumo.or.id / verifikator123 · pengelola@danukusumo.or.id / pengelola123
-        </div>
         <button type="button" onClick={kembali} className="mt-4 text-sm font-semibold text-brand-700 underline-offset-4 hover:underline">
           ← Kembali ke situs publik
         </button>
@@ -251,13 +195,12 @@ function FormulirLogin({ padaSukses, kembali }: { padaSukses: (s: Sesi) => void;
 /* ================= ANTREAN DONASI ================= */
 function AntreanDonasi() {
   const [items, setItems] = useState<Donasi[] | null>(null);
-  const [filter, setFilter] = useState("");
   const [versi, setVersi] = useState(0);
   const [buka, setBuka] = useState<Donasi | null>(null);
 
   useEffect(() => {
     let aktif = true;
-    fetch(`/api/admin/donations${filter ? `?status=${filter}` : ""}`)
+    fetch("/api/admin/donations")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => {
         if (aktif) setItems(d.items ?? []);
@@ -268,7 +211,7 @@ function AntreanDonasi() {
     return () => {
       aktif = false;
     };
-  }, [filter, versi]);
+  }, [versi]);
 
   const muatData = () => setVersi((v) => v + 1);
 
@@ -278,18 +221,10 @@ function AntreanDonasi() {
         <div>
           <h2 className="text-xl">Antrean konfirmasi donasi</h2>
           <p className="text-sm text-muted-foreground">
-            Hanya petugas berperan verifikator yang dapat mengubah status; editor ditolak server.
+            Kelola konfirmasi donasi yang masuk dari donatur.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="filter-donasi" className="text-sm font-semibold">Status</label>
-          <select id="filter-donasi" value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-lg border border-input px-3 py-2.5 text-sm">
-            <option value="">Semua</option>
-            <option value="menunggu-verifikasi">Menunggu verifikasi</option>
-            <option value="terverifikasi">Terverifikasi</option>
-            <option value="perlu-perbaikan">Perlu perbaikan</option>
-            <option value="ditolak">Ditolak</option>
-          </select>
           <button type="button" onClick={muatData} className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold hover:bg-muted">
             <RefreshCcw className="h-4 w-4" aria-hidden /> Muat ulang
           </button>
@@ -300,26 +235,24 @@ function AntreanDonasi() {
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-brand-50 text-left">
             <tr>
-              <th scope="col" className="px-3 py-2.5 font-semibold">Referensi</th>
+              <th scope="col" className="px-3 py-2.5 font-semibold">Nomor</th>
               <th scope="col" className="px-3 py-2.5 font-semibold">Donatur</th>
               <th scope="col" className="px-3 py-2.5 font-semibold">Nominal</th>
-              <th scope="col" className="px-3 py-2.5 font-semibold">Status</th>
               <th scope="col" className="px-3 py-2.5 font-semibold">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {items === null && (
-              <tr><td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">Memuat…</td></tr>
+              <tr><td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">Memuat…</td></tr>
             )}
             {items !== null && items.length === 0 && (
-              <tr><td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">Tidak ada data.</td></tr>
+              <tr><td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">Tidak ada data.</td></tr>
             )}
-            {items?.map((d) => (
+            {items?.map((d, i) => (
               <tr key={d.id} className="border-t border-border/60">
-                <td className="px-3 py-2.5 font-mono text-xs">{d.referensi}</td>
+                <td className="px-3 py-2.5 tabular-nums">{i + 1}</td>
                 <td className="px-3 py-2.5">{d.nama}</td>
                 <td className="px-3 py-2.5 tabular-nums">{formatRupiah(d.nominalRupiah)}</td>
-                <td className="px-3 py-2.5"><StatusBadge status={d.status} /></td>
                 <td className="px-3 py-2.5">
                   <button type="button" onClick={() => setBuka(d)} className="rounded-lg border border-brand-300 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">
                     Buka
@@ -338,35 +271,12 @@ function AntreanDonasi() {
 
 function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: () => void; padaBerubah: () => void }) {
   const [buktiAda, setBuktiAda] = useState<boolean | null>(null);
-  const [statusBaru, setStatusBaru] = useState("");
-  const [alasan, setAlasan] = useState("");
-  const [galat, setGalat] = useState("");
-  const [memuat, setMemuat] = useState(false);
 
-  const opsi = OPSI_STATUS_DONASI[donasi.status] ?? [];
-
-  const keputusan = async () => {
-    setGalat("");
-    if (!statusBaru) { setGalat("Pilih status tujuan"); return; }
-    if (alasan.trim().length < 5) { setGalat("Alasan keputusan wajib diisi (minimal 5 karakter)"); return; }
-    setMemuat(true);
-    try {
-      const res = await fetch(`/api/admin/donations/${donasi.id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: statusBaru, alasan: alasan.trim(), version: donasi.version }),
-      });
-      const d = await res.json();
-      if (!res.ok) {
-        setGalat(d.errors?.version ?? d.errors?.alasan ?? d.error ?? "Gagal mengubah status");
-        return;
-      }
-      tutup();
-      padaBerubah();
-    } finally {
-      setMemuat(false);
-    }
-  };
+  useEffect(() => {
+    fetch(`/api/admin/receipts/${donasi.receiptKey}`)
+      .then((r) => setBuktiAda(r.ok))
+      .catch(() => setBuktiAda(false));
+  }, [donasi.receiptKey]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-label={`Detail donasi ${donasi.referensi}`}>
@@ -374,7 +284,6 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="font-mono text-lg font-bold">{donasi.referensi}</h3>
-            <StatusBadge status={donasi.status} />
           </div>
           <button type="button" onClick={tutup} className="rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-muted" aria-label="Tutup detail">Tutup</button>
         </div>
@@ -398,10 +307,10 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
         <div className="mt-4 rounded-xl border border-brand-100 p-4">
           <h4 className="flex items-center gap-2 text-sm font-semibold">
             <ImageIcon className="h-4 w-4 text-brand-600" aria-hidden />
-            Bukti transfer (privat)
+            Bukti transfer
           </h4>
           <p className="mt-1 text-xs text-muted-foreground">
-            Kunci berkas: <span className="font-mono">{donasi.receiptKey.slice(0, 18)}…</span> — hanya terbuka lewat route berperan verifikator.
+            Klik tombol di bawah untuk melihat bukti transfer donatur.
           </p>
           {buktiAda === null && (
             <button
@@ -421,34 +330,6 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
             <img src={`/api/admin/receipts/${donasi.receiptKey}`} alt={`Bukti transfer donasi ${donasi.referensi} (privat)`} className="mt-3 max-h-64 w-full rounded-lg border border-border object-contain" />
           )}
         </div>
-
-        {opsi.length > 0 ? (
-          <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
-            <h4 className="text-sm font-semibold">Ubah status (keputusan manual)</h4>
-            {galat && <p className="mt-2 rounded-lg border border-cta-100 bg-cta-50 p-2 text-xs text-cta-700" role="alert">{galat}</p>}
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="dd-status" className="mb-1 block text-xs font-semibold">Status tujuan</label>
-                <select id="dd-status" value={statusBaru} onChange={(e) => setStatusBaru(e.target.value)} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm">
-                  <option value="">— pilih —</option>
-                  {opsi.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="dd-alasan" className="mb-1 block text-xs font-semibold">Alasan (wajib, tercatat di audit)</label>
-                <input id="dd-alasan" value={alasan} onChange={(e) => setAlasan(e.target.value)} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" maxLength={300} />
-              </div>
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">Versi data: {donasi.version}. Bila petugas lain mengubah lebih dulu, keputusan Anda ditolak server (cek versi).</p>
-            <button type="button" onClick={keputusan} disabled={memuat} className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-              <CheckCircle2 className="h-4 w-4" aria-hidden /> {memuat ? "Menyimpan…" : "Simpan keputusan"}
-            </button>
-          </div>
-        ) : (
-          <p className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            Status ini sudah final pada mesin status; tidak ada transisi lanjutan yang diizinkan.
-          </p>
-        )}
       </div>
     </div>
   );
@@ -457,13 +338,12 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
 /* ================= ANTREAN SEWA ================= */
 function AntreanSewa() {
   const [items, setItems] = useState<Sewa[] | null>(null);
-  const [filter, setFilter] = useState("");
   const [versi, setVersi] = useState(0);
   const [buka, setBuka] = useState<Sewa | null>(null);
 
   useEffect(() => {
     let aktif = true;
-    fetch(`/api/admin/rentals${filter ? `?status=${filter}` : ""}`)
+    fetch("/api/admin/rentals")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => {
         if (aktif) setItems(d.items ?? []);
@@ -474,7 +354,7 @@ function AntreanSewa() {
     return () => {
       aktif = false;
     };
-  }, [filter, versi]);
+  }, [versi]);
 
   const muatData = () => setVersi((v) => v + 1);
 
@@ -482,21 +362,12 @@ function AntreanSewa() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl">Antrean permohonan persewaan</h2>
+          <h2 className="text-xl">Antrean Permohonan Sewa</h2>
           <p className="text-sm text-muted-foreground">
-            Permohonan = bukan booking; jadwal tidak terkunci, tidak ada pembayaran.
+            Ini adalah permohonan, bukan booking. Jadwal belum dikunci dan belum ada pembayaran.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="filter-sewa" className="text-sm font-semibold">Status</label>
-          <select id="filter-sewa" value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-lg border border-input px-3 py-2.5 text-sm">
-            <option value="">Semua</option>
-            <option value="diajukan">Diajukan</option>
-            <option value="ditinjau">Ditinjau</option>
-            <option value="disetujui">Disetujui</option>
-            <option value="perlu-perbaikan">Perlu perbaikan</option>
-            <option value="ditolak">Ditolak</option>
-          </select>
           <button type="button" onClick={muatData} className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold hover:bg-muted">
             <RefreshCcw className="h-4 w-4" aria-hidden /> Muat ulang
           </button>
@@ -507,22 +378,20 @@ function AntreanSewa() {
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-brand-50 text-left">
             <tr>
-              <th scope="col" className="px-3 py-2.5 font-semibold">Referensi</th>
+              <th scope="col" className="px-3 py-2.5 font-semibold">Nomor</th>
               <th scope="col" className="px-3 py-2.5 font-semibold">Penyewa</th>
               <th scope="col" className="px-3 py-2.5 font-semibold">Item</th>
-              <th scope="col" className="px-3 py-2.5 font-semibold">Status</th>
               <th scope="col" className="px-3 py-2.5 font-semibold">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {items === null && <tr><td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">Memuat…</td></tr>}
-            {items !== null && items.length === 0 && <tr><td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">Tidak ada data.</td></tr>}
-            {items?.map((s) => (
+            {items === null && <tr><td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">Memuat…</td></tr>}
+            {items !== null && items.length === 0 && <tr><td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">Tidak ada data.</td></tr>}
+            {items?.map((s, i) => (
               <tr key={s.id} className="border-t border-border/60">
-                <td className="px-3 py-2.5 font-mono text-xs">{s.referensi}</td>
+                <td className="px-3 py-2.5 tabular-nums">{i + 1}</td>
                 <td className="px-3 py-2.5">{s.penyewa}</td>
                 <td className="px-3 py-2.5">{s.itemNama}</td>
-                <td className="px-3 py-2.5"><StatusBadge status={s.status} /></td>
                 <td className="px-3 py-2.5">
                   <button type="button" onClick={() => setBuka(s)} className="rounded-lg border border-brand-300 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">Buka</button>
                 </td>
@@ -537,38 +406,20 @@ function AntreanSewa() {
   );
 }
 
-function DetailSewa({ sewa, tutup, padaBerubah }: { sewa: Sewa; tutup: () => void; padaBerubah: () => void }) {
-  const jadwal = JSON.parse(sewa.jadwal || "{}") as { mulai?: string; selesai?: string };
-  const rincian = JSON.parse(sewa.rincianJenis || "{}") as Record<string, unknown>;
-  const estimasi = JSON.parse(sewa.estimasiSnapshot || "{}") as { rincian?: { label: string; jumlah: number }[]; total?: number };
-  const [statusBaru, setStatusBaru] = useState("");
-  const [alasan, setAlasan] = useState("");
-  const [galat, setGalat] = useState("");
-  const [memuat, setMemuat] = useState(false);
-  const opsi = OPSI_STATUS_SEWA[sewa.status] ?? [];
+function bacaJson<T>(nilai: unknown, cadangan: T): T {
+  if (nilai && typeof nilai === "object") return nilai as T;
+  if (typeof nilai !== "string" || !nilai.trim()) return cadangan;
+  try {
+    return JSON.parse(nilai) as T;
+  } catch {
+    return cadangan;
+  }
+}
 
-  const keputusan = async () => {
-    setGalat("");
-    if (!statusBaru) { setGalat("Pilih status tujuan"); return; }
-    if (alasan.trim().length < 5) { setGalat("Alasan keputusan wajib diisi (minimal 5 karakter)"); return; }
-    setMemuat(true);
-    try {
-      const res = await fetch(`/api/admin/rentals/${sewa.id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: statusBaru, alasan: alasan.trim(), version: sewa.version }),
-      });
-      const d = await res.json();
-      if (!res.ok) {
-        setGalat(d.errors?.version ?? d.errors?.alasan ?? d.error ?? "Gagal mengubah status");
-        return;
-      }
-      tutup();
-      padaBerubah();
-    } finally {
-      setMemuat(false);
-    }
-  };
+function DetailSewa({ sewa, tutup, padaBerubah }: { sewa: Sewa; tutup: () => void; padaBerubah: () => void }) {
+  const jadwal = bacaJson<{ mulai?: string; selesai?: string }>(sewa.jadwal, {});
+  const rincian = bacaJson<Record<string, unknown>>(sewa.rincianJenis, {});
+  const estimasi = bacaJson<{ rincian?: { label: string; jumlah: number }[]; total?: number }>(sewa.estimasiSnapshot, {});
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-label={`Detail persewaan ${sewa.referensi}`}>
@@ -576,7 +427,6 @@ function DetailSewa({ sewa, tutup, padaBerubah }: { sewa: Sewa; tutup: () => voi
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="font-mono text-lg font-bold">{sewa.referensi}</h3>
-            <StatusBadge status={sewa.status} />
           </div>
           <button type="button" onClick={tutup} className="rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-muted" aria-label="Tutup detail">Tutup</button>
         </div>
@@ -611,34 +461,6 @@ function DetailSewa({ sewa, tutup, padaBerubah }: { sewa: Sewa; tutup: () => voi
         {sewa.keputusanAlasan && (
           <p className="mt-3 text-sm"><span className="text-muted-foreground">Keputusan terakhir:</span> {sewa.keputusanAlasan}</p>
         )}
-
-        {opsi.length > 0 ? (
-          <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
-            <h4 className="text-sm font-semibold">Ubah status (keputusan manual)</h4>
-            {galat && <p className="mt-2 rounded-lg border border-cta-100 bg-cta-50 p-2 text-xs text-cta-700" role="alert">{galat}</p>}
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="ds-status" className="mb-1 block text-xs font-semibold">Status tujuan</label>
-                <select id="ds-status" value={statusBaru} onChange={(e) => setStatusBaru(e.target.value)} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm">
-                  <option value="">— pilih —</option>
-                  {opsi.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="ds-alasan" className="mb-1 block text-xs font-semibold">Alasan (wajib, tercatat di audit)</label>
-                <input id="ds-alasan" value={alasan} onChange={(e) => setAlasan(e.target.value)} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" maxLength={300} />
-              </div>
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">Versi data: {sewa.version}. Pemeriksaan versi mencegah dua petugas saling menimpa.</p>
-            <button type="button" onClick={keputusan} disabled={memuat} className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-              <CheckCircle2 className="h-4 w-4" aria-hidden /> {memuat ? "Menyimpan…" : "Simpan keputusan"}
-            </button>
-          </div>
-        ) : (
-          <p className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            Status ini sudah final pada mesin status; tidak ada transisi lanjutan yang diizinkan.
-          </p>
-        )}
       </div>
     </div>
   );
@@ -648,7 +470,6 @@ function DetailSewa({ sewa, tutup, padaBerubah }: { sewa: Sewa; tutup: () => voi
 function PanelNotifikasi() {
   const [items, setItems] = useState<Notifikasi[] | null>(null);
   const [jenis, setJenis] = useState("");
-  const [status, setStatus] = useState("");
   const [hanyaBelum, setHanyaBelum] = useState(false);
   const [versi, setVersi] = useState(0);
   const [pesan, setPesan] = useState("");
@@ -657,7 +478,6 @@ function PanelNotifikasi() {
     let aktif = true;
     const p = new URLSearchParams();
     if (jenis) p.set("jenis", jenis);
-    if (status) p.set("status", status);
     if (hanyaBelum) p.set("unread", "1");
     fetch(`/api/admin/notifications?${p.toString()}`)
       .then((r) => (r.ok ? r.json() : { items: [] }))
@@ -670,7 +490,7 @@ function PanelNotifikasi() {
     return () => {
       aktif = false;
     };
-  }, [jenis, status, hanyaBelum, versi]);
+  }, [jenis, hanyaBelum, versi]);
 
   const muatData = () => setVersi((v) => v + 1);
 
@@ -695,7 +515,7 @@ function PanelNotifikasi() {
     <div>
       <h2 className="text-xl">Notifikasi pengajuan</h2>
       <p className="text-sm text-muted-foreground">
-        Daftar hanya menampilkan ringkasan pengajuan — tanpa bukti transfer maupun data pribadi yang berlebihan.
+        Ringkasan pengajuan donasi dan persewaan yang masuk.
       </p>
       <div className="mt-3 flex flex-wrap items-end gap-3">
         <div>
@@ -704,15 +524,6 @@ function PanelNotifikasi() {
             <option value="">Semua</option>
             <option value="donasi">Donasi</option>
             <option value="persewaan">Persewaan</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="nf-status" className="mb-1 block text-xs font-semibold">Status entitas</label>
-          <select id="nf-status" value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-lg border border-input px-3 py-2 text-sm">
-            <option value="">Semua</option>
-            <option value="menunggu-verifikasi">Menunggu verifikasi</option>
-            <option value="diajukan">Diajukan</option>
-            <option value="ditinjau">Ditinjau</option>
           </select>
         </div>
         <div className="flex items-center gap-2">
@@ -731,10 +542,8 @@ function PanelNotifikasi() {
           <li key={n.id} className={`rounded-xl border p-4 ${n.dibaca ? "border-border bg-white" : "border-brand-300 bg-brand-50/70"}`}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                {!n.dibaca && <StatusBadge status="belumDibaca" />}
+                {!n.dibaca && <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-800">Belum dibaca</span>}
                 <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold capitalize">{n.jenis}</span>
-                <span className="font-mono text-sm font-bold">{n.referensi}</span>
-                {n.statusEntitas && <StatusBadge status={n.statusEntitas} />}
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">{formatTanggal(n.createdAt)}</span>
@@ -749,7 +558,7 @@ function PanelNotifikasi() {
               {n.deliveries.map((d) => (
                 <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white px-3 py-2 text-xs">
                   <span>
-                    Kanal <strong className="capitalize">{d.kanal}</strong> · <StatusBadge status={d.status} /> · percobaan {d.percobaan}
+                    Kanal <strong className="capitalize">{d.kanal}</strong> · {d.status} · percobaan {d.percobaan}
                   </span>
                   {d.status === "gagal" && (
                     <button type="button" onClick={() => kirimUlang(n.id, d.id)} className="inline-flex items-center gap-1 rounded-lg border border-brand-300 px-2.5 py-1.5 font-semibold text-brand-700 hover:bg-brand-50">
@@ -769,9 +578,31 @@ function PanelNotifikasi() {
 /* ================= BERITA (editor) ================= */
 function PanelBerita() {
   const [items, setItems] = useState<Artikel[]>([]);
-  const [form, setForm] = useState({ judul: "", kategori: "Kegiatan", ringkasan: "", isi: "", mediaAlt: "", mediaUrl: "", publicationConsent: false });
+  const [form, setForm] = useState({ judul: "", kategori: "Kegiatan", ringkasan: "", isi: "", mediaAlt: "", mediaUrl: "" });
   const [galat, setGalat] = useState("");
   const [pesan, setPesan] = useState("");
+  const [unggahan, setUnggahan] = useState<{ url: string; namaFile: string } | null>(null);
+  const [memuatUnggah, setMemuatUnggah] = useState(false);
+  const [memuat, setMemuat] = useState(false);
+
+  const unggahFile = async (file: File) => {
+    setMemuatUnggah(true);
+    setGalat("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
+      setUnggahan(d);
+      setForm((f) => ({ ...f, mediaUrl: d.url }));
+      setPesan("Foto berhasil diunggah.");
+    } catch (e) {
+      setGalat(e instanceof Error ? e.message : "Gagal mengunggah");
+    } finally {
+      setMemuatUnggah(false);
+    }
+  };
 
   const muatData = useCallback(() => {
     fetch("/api/admin/articles")
@@ -783,8 +614,8 @@ function PanelBerita() {
 
   const simpan = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMemuat(true);
     setGalat("");
-    setPesan("");
     const res = await fetch("/api/admin/articles", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -795,8 +626,9 @@ function PanelBerita() {
       setGalat(Object.values(d.errors ?? {})[0] as string ?? d.error ?? "Gagal menyimpan");
       return;
     }
-    setPesan("Berita draf tersimpan. Ajukan persetujuan dari daftar.");
-    setForm({ judul: "", kategori: "Kegiatan", ringkasan: "", isi: "", mediaAlt: "", mediaUrl: "", publicationConsent: false });
+    setPesan("Berita draf tersimpan. Terbitkan dari daftar.");
+    setForm({ judul: "", kategori: "Kegiatan", ringkasan: "", isi: "", mediaAlt: "", mediaUrl: "" });
+    setUnggahan(null);
     muatData();
   };
 
@@ -817,8 +649,7 @@ function PanelBerita() {
   };
 
   const lanjutan: Record<string, string[]> = {
-    draf: ["menunggu-persetujuan"],
-    "menunggu-persetujuan": ["terbit", "draf"],
+    draf: ["terbit"],
     terbit: ["ditarik"],
     ditarik: ["draf"],
   };
@@ -837,12 +668,11 @@ function PanelBerita() {
                   <p className="font-semibold">{a.judul}</p>
                   <p className="text-xs text-muted-foreground">{a.kategori} · /{a.slug}</p>
                 </div>
-                <StatusBadge status={a.status} />
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {(lanjutan[a.status] ?? []).map((s) => (
                   <button key={s} type="button" onClick={() => ubahStatus(a.id, s)} className="rounded-lg border border-brand-300 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">
-                    {s === "menunggu-persetujuan" ? "Ajukan persetujuan" : s === "terbit" ? "Terbitkan" : s === "ditarik" ? "Tarik" : "Jadikan draf"}
+                    {s === "terbit" ? "Terbitkan" : s === "ditarik" ? "Tarik" : "Jadikan draf"}
                   </button>
                 ))}
               </div>
@@ -877,9 +707,11 @@ function PanelBerita() {
             <label htmlFor="b-url" className="mb-1 block text-sm font-semibold">URL foto (opsional, https)</label>
             <input id="b-url" value={form.mediaUrl} onChange={(e) => setForm({ ...form, mediaUrl: e.target.value })} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" placeholder="https://…" />
           </div>
-          <div className="flex items-start gap-2">
-            <input id="b-consent" type="checkbox" checked={form.publicationConsent} onChange={(e) => setForm({ ...form, publicationConsent: e.target.checked })} className="mt-1 h-4 w-4" />
-            <label htmlFor="b-consent" className="text-sm">Foto memiliki izin tayang (publicationConsent)</label>
+          <div>
+            <label htmlFor="b-file" className="mb-1 block text-sm font-semibold">Atau unggah foto dari komputer</label>
+            <input id="b-file" type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) unggahFile(f); }} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" />
+            {unggahan && <p className="mt-1 text-xs text-muted-foreground">Terunggah: {unggahan.namaFile}</p>}
+            {unggahan && <img src={unggahan.url} alt="Pratinjau" className="mt-2 h-32 w-full rounded-lg object-cover" />}
           </div>
           <button type="submit" className="min-h-[44px] w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Simpan sebagai draf</button>
         </div>
@@ -891,9 +723,30 @@ function PanelBerita() {
 /* ================= PENGUMUMAN (editor) ================= */
 function PanelPengumuman() {
   const [items, setItems] = useState<Pengumuman[]>([]);
-  const [form, setForm] = useState({ judul: "", isi: "", kategori: "Umum", prioritas: "biasa" });
+  const [form, setForm] = useState({ judul: "", isi: "", kategori: "Umum", prioritas: "biasa", mediaAlt: "", mediaUrl: "" });
   const [pesan, setPesan] = useState("");
   const [galat, setGalat] = useState("");
+  const [unggahan, setUnggahan] = useState<{ url: string; namaFile: string } | null>(null);
+  const [memuatUnggah, setMemuatUnggah] = useState(false);
+
+  const unggahFile = async (file: File) => {
+    setMemuatUnggah(true);
+    setGalat("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
+      setUnggahan(d);
+      setForm((f) => ({ ...f, mediaUrl: d.url }));
+      setPesan("Foto berhasil diunggah.");
+    } catch (e) {
+      setGalat(e instanceof Error ? e.message : "Gagal mengunggah");
+    } finally {
+      setMemuatUnggah(false);
+    }
+  };
 
   const muatData = useCallback(() => {
     fetch("/api/admin/announcements")
@@ -913,7 +766,8 @@ function PanelPengumuman() {
     });
     if (!res.ok) { const d = await res.json(); setGalat(d.error ?? "Gagal menyimpan"); return; }
     setPesan("Pengumuman draf tersimpan.");
-    setForm({ judul: "", isi: "", kategori: "Umum", prioritas: "biasa" });
+    setForm({ judul: "", isi: "", kategori: "Umum", prioritas: "biasa", mediaAlt: "", mediaUrl: "" });
+    setUnggahan(null);
     muatData();
   };
 
@@ -927,8 +781,7 @@ function PanelPengumuman() {
   };
 
   const lanjutan: Record<string, string[]> = {
-    draf: ["menunggu-persetujuan"],
-    "menunggu-persetujuan": ["terbit", "draf"],
+    draf: ["terbit"],
     terbit: ["ditarik"],
     ditarik: ["draf"],
   };
@@ -947,12 +800,11 @@ function PanelPengumuman() {
                   <p className="font-semibold">{p.judul}</p>
                   <p className="text-xs text-muted-foreground">{p.kategori} · {p.prioritas}</p>
                 </div>
-                <StatusBadge status={p.status} />
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {(lanjutan[p.status] ?? []).map((s) => (
                   <button key={s} type="button" onClick={() => ubahStatus(p.id, s)} className="rounded-lg border border-brand-300 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">
-                    {s === "menunggu-persetujuan" ? "Ajukan persetujuan" : s === "terbit" ? "Terbitkan" : s === "ditarik" ? "Tarik" : "Jadikan draf"}
+                    {s === "terbit" ? "Terbitkan" : s === "ditarik" ? "Tarik" : "Jadikan draf"}
                   </button>
                 ))}
               </div>
@@ -984,6 +836,12 @@ function PanelPengumuman() {
               </select>
             </div>
           </div>
+          <div>
+            <label htmlFor="p-file" className="mb-1 block text-sm font-semibold">Unggah foto (opsional)</label>
+            <input id="p-file" type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) unggahFile(f); }} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" />
+            {unggahan && <p className="mt-1 text-xs text-muted-foreground">Terunggah: {unggahan.namaFile}</p>}
+            {unggahan && <img src={unggahan.url} alt="Pratinjau" className="mt-2 h-32 w-full rounded-lg object-cover" />}
+          </div>
           <button type="submit" className="min-h-[44px] w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Simpan sebagai draf</button>
         </div>
       </form>
@@ -1009,23 +867,17 @@ function PanelStatistik() {
     { label: "SMA/SMK/MA", jumlah: 45 },
     { label: "Perguruan tinggi", jumlah: 15 },
   ]);
-  const [alokasi, setAlokasi] = useState<Baris[]>([
-    { label: "Pendidikan", persen: 45 },
-    { label: "Makanan gizi", persen: 30 },
-    { label: "Kesehatan", persen: 15 },
-    { label: "Operasional", persen: 10 },
-  ]);
   const [pesan, setPesan] = useState("");
   const [galat, setGalat] = useState("");
 
-  const total = (arr: Baris[], k: "jumlah" | "persen") => arr.reduce((a, b) => a + (b[k] ?? 0), 0);
+  const total = (arr: Baris[]) => arr.reduce((a, b) => a + (b.jumlah ?? 0), 0);
 
   const simpan = async () => {
     setPesan(""); setGalat("");
     const res = await fetch("/api/admin/stats", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ periode, sumber, usiaAgregat: usia, pendidikanAgregat: pendidikan, alokasi }),
+      body: JSON.stringify({ periode, sumber, usiaAgregat: usia, pendidikanAgregat: pendidikan }),
     });
     const d = await res.json();
     if (!res.ok) {
@@ -1035,14 +887,14 @@ function PanelStatistik() {
     setPesan("Versi statistik baru tersimpan; halaman publik menampilkan versi terbaru dengan periode & sumber.");
   };
 
-  const tabelKelompok = (judul: string, arr: Baris[], k: "jumlah" | "persen", setArr: (v: Baris[]) => void) => (
+  const tabelKelompok = (judul: string, arr: Baris[], setArr: (v: Baris[]) => void) => (
     <div className="rounded-xl border border-brand-100 bg-white p-4">
-      <h3 className="font-semibold">{judul} <span className="text-xs font-normal text-muted-foreground">({k === "persen" ? `total ${total(arr, k)}%` : `total ${total(arr, k)}`})</span></h3>
+      <h3 className="font-semibold">{judul} <span className="text-xs font-normal text-muted-foreground">(total {total(arr)})</span></h3>
       <ul className="mt-2 space-y-2">
         {arr.map((b, i) => (
           <li key={i} className="flex gap-2">
             <input aria-label={`${judul} baris ${i + 1} label`} value={b.label} onChange={(e) => setArr(arr.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} className="flex-1 rounded-lg border border-input px-2.5 py-2 text-sm" />
-            <input aria-label={`${judul} baris ${i + 1} angka`} inputMode="numeric" value={b[k] ?? ""} onChange={(e) => setArr(arr.map((x, j) => (j === i ? { ...x, [k]: Number.parseInt(e.target.value, 10) || 0 } : x)))} className="w-20 rounded-lg border border-input px-2.5 py-2 text-sm tabular-nums" />
+            <input aria-label={`${judul} baris ${i + 1} angka`} inputMode="numeric" value={b.jumlah ?? ""} onChange={(e) => setArr(arr.map((x, j) => (j === i ? { ...x, jumlah: Number.parseInt(e.target.value, 10) || 0 } : x)))} className="w-20 rounded-lg border border-input px-2.5 py-2 text-sm tabular-nums" />
           </li>
         ))}
       </ul>
@@ -1052,11 +904,11 @@ function PanelStatistik() {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-xl">Statistik agregat (versi baru)</h2>
+        <h2 className="text-xl">Statistik</h2>
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Menyimpan versi baru (riwayat terjaga). Alokasi harus berjumlah tepat 100% agar angka grafik = tabel.
-      </p>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Ubah angka statistik agregat. Setiap grafik di halaman publik akan menampilkan angka yang sama dengan tabel ini.
+      </div>
       {galat && <p className="mt-2 rounded-lg border border-cta-100 bg-cta-50 p-2 text-sm text-cta-700" role="alert">{galat}</p>}
       {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -1069,10 +921,9 @@ function PanelStatistik() {
           <input id="st-sumber" value={sumber} onChange={(e) => setSumber(e.target.value)} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" maxLength={200} />
         </div>
       </div>
-      <div className="mt-3 grid gap-3 lg:grid-cols-3">
-        {tabelKelompok("Usia", usia, "jumlah", setUsia)}
-        {tabelKelompok("Pendidikan", pendidikan, "jumlah", setPendidikan)}
-        {tabelKelompok("Alokasi (%)", alokasi, "persen", setAlokasi)}
+      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        {tabelKelompok("Usia", usia, setUsia)}
+        {tabelKelompok("Pendidikan", pendidikan, setPendidikan)}
       </div>
       <button type="button" onClick={simpan} className="mt-4 min-h-[44px] rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
         Simpan versi statistik
@@ -1087,6 +938,24 @@ function PanelPengasuh() {
   const [nama, setNama] = useState("");
   const [peran, setPeran] = useState("");
   const [pesan, setPesan] = useState("");
+  const [unggahan, setUnggahan] = useState<{ url: string; namaFile: string } | null>(null);
+  const [memuatUnggah, setMemuatUnggah] = useState(false);
+
+  const unggahFile = async (file: File) => {
+    setMemuatUnggah(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
+      setUnggahan(d);
+    } catch (e) {
+      setPesan(e instanceof Error ? e.message : "Gagal mengunggah");
+    } finally {
+      setMemuatUnggah(false);
+    }
+  };
 
   const muatData = useCallback(() => {
     fetch("/api/admin/staff")
@@ -1096,30 +965,32 @@ function PanelPengasuh() {
   }, []);
   useEffect(() => { muatData(); }, [muatData]);
 
-  const ubah = async (id: string, publicationConsent?: boolean, status?: string) => {
-    await fetch("/api/admin/staff", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, publicationConsent, status }),
-    });
-    muatData();
-  };
-
   const tambah = async (e: React.FormEvent) => {
     e.preventDefault();
+    const body: any = { nama, peran };
+    if (unggahan) body.foto = unggahan.url;
     const res = await fetch("/api/admin/staff", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nama, peran }),
+      body: JSON.stringify(body),
     });
-    if (res.ok) { setNama(""); setPeran(""); setPesan("Pengasuh draf ditambahkan."); muatData(); }
+    if (res.ok) { setNama(""); setPeran(""); setUnggahan(null); setPesan("Pengasuh draf ditambahkan."); muatData(); }
+  };
+
+  const ubah = async (id: string, status?: string) => {
+    await fetch("/api/admin/staff", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    });
+    muatData();
   };
 
   return (
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="lg:col-span-3">
         <h2 className="text-xl">Direktori pengasuh</h2>
-        <p className="text-sm text-muted-foreground">Tampil publik hanya bila status terbit DAN izin tayang dicentang.</p>
+        <p className="text-sm text-muted-foreground">Tampil publik hanya bila status terbit.</p>
         {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
         <ul className="mt-3 max-h-[32rem] space-y-2 overflow-y-auto scroll-area-thin">
           {items.map((s) => (
@@ -1129,12 +1000,7 @@ function PanelPengasuh() {
                 <p className="text-xs text-muted-foreground">{s.peran}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <label className="flex items-center gap-1.5 text-xs font-semibold">
-                  <input type="checkbox" checked={s.publicationConsent} onChange={(e) => ubah(s.id, e.target.checked)} className="h-4 w-4" />
-                  Izin tayang
-                </label>
-                <StatusBadge status={s.status} />
-                <button type="button" onClick={() => ubah(s.id, undefined, s.status === "terbit" ? "draf" : "terbit")} className="rounded-lg border border-brand-300 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">
+                <button type="button" onClick={() => ubah(s.id, s.status === "terbit" ? "draf" : "terbit")} className="rounded-lg border border-brand-300 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">
                   {s.status === "terbit" ? "Jadikan draf" : "Terbitkan"}
                 </button>
               </div>
@@ -1153,6 +1019,12 @@ function PanelPengasuh() {
             <label htmlFor="s-peran" className="mb-1 block text-sm font-semibold">Peran</label>
             <input id="s-peran" value={peran} onChange={(e) => setPeran(e.target.value)} required className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" maxLength={80} />
           </div>
+          <div>
+            <label htmlFor="s-file" className="mb-1 block text-sm font-semibold">Foto pengasuh (opsional)</label>
+            <input id="s-file" type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) unggahFile(f); }} className="w-full rounded-lg border border-input px-3 py-2.5 text-sm" />
+            {unggahan && <p className="mt-1 text-xs text-muted-foreground">Terunggah: {unggahan.namaFile}</p>}
+            {unggahan && <img src={unggahan.url} alt="Pratinjau" className="mt-2 h-32 w-full rounded-lg object-cover" />}
+          </div>
           <button type="submit" className="min-h-[44px] w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Tambah</button>
         </div>
       </form>
@@ -1164,6 +1036,35 @@ function PanelPengasuh() {
 function PanelKatalog() {
   const [items, setItems] = useState<KatalogItem[]>([]);
   const [pesan, setPesan] = useState("");
+  const [unggahanId, setUnggahanId] = useState<string | null>(null);
+  const [unggahanFile, setUnggahanFile] = useState<{ url: string; namaFile: string } | null>(null);
+  const [memuatUnggah, setMemuatUnggah] = useState(false);
+
+  const unggahFile = async (id: string, file: File) => {
+    setUnggahanId(id);
+    setMemuatUnggah(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
+      setUnggahanFile(d);
+      await fetch(`/api/admin/rental-items`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, foto: d.url }),
+      });
+      setPesan("Foto katalog berhasil diperbarui.");
+      muatData();
+    } catch (e) {
+      setPesan(e instanceof Error ? e.message : "Gagal mengunggah");
+    } finally {
+      setMemuatUnggah(false);
+      setUnggahanId(null);
+      setUnggahanFile(null);
+    }
+  };
 
   const muatData = useCallback(() => {
     fetch("/api/admin/rental-items")
@@ -1200,9 +1101,11 @@ function PanelKatalog() {
           <li key={it.id} className="rounded-xl border border-border bg-white p-4">
             <div className="flex items-center justify-between gap-2">
               <p className="font-semibold">{it.nama}</p>
-              <StatusBadge status={it.status} />
             </div>
             <p className="text-xs text-muted-foreground">{it.jenis} · {it.satuan}</p>
+            {it.foto && <img src={it.foto} alt={it.nama} className="mt-2 h-32 w-full rounded-lg object-cover" />}
+            <label htmlFor={`kat-file-${it.id}`} className="mt-2 block text-xs font-semibold">Foto katalog</label>
+            <input id={`kat-file-${it.id}`} type="file" accept="image/*" disabled={memuatUnggah && unggahanId === it.id} onChange={(e) => { const f = e.target.files?.[0]; if (f) unggahFile(it.id, f); }} className="mt-1 w-full rounded-lg border border-input px-3 py-2 text-sm" />
             <label htmlFor={`tarif-${it.id}`} className="mt-2 block text-xs font-semibold">Tarif contoh (rupiah)</label>
             <div className="mt-1 flex gap-2">
               <input id={`tarif-${it.id}`} inputMode="numeric" defaultValue={it.tarifContoh} onBlur={(e) => { const v = Number.parseInt(e.target.value, 10); if (Number.isInteger(v) && v !== it.tarifContoh) simpanTarif(it.id, v); }} className="w-32 rounded-lg border border-input px-2.5 py-2 text-sm tabular-nums" />
@@ -1217,63 +1120,40 @@ function PanelKatalog() {
   );
 }
 
-/* ================= AKUN (pengelola) ================= */
-function PanelAkun() {
-  const [items, setItems] = useState<Akun[]>([]);
-  const [pesan, setPesan] = useState("");
-
-  const muatData = useCallback(() => {
-    fetch("/api/admin/users")
-      .then((r) => (r.ok ? r.json() : { items: [] }))
-      .then((d) => setItems(d.items ?? []))
-      .catch(() => setItems([]));
-  }, []);
-  useEffect(() => { muatData(); }, [muatData]);
-
-  const ubahPeran = async (id: string, role: string) => {
-    setPesan("");
-    const res = await fetch("/api/admin/users", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, role }),
-    });
-    const d = await res.json();
-    setPesan(res.ok ? "Peran diperbarui." : (d.error ?? "Gagal mengubah peran"));
-    muatData();
-  };
-
+/* ================= USAHA PANTI ================= */
+function PanelUsahaPanti() {
+  const [sub, setSub] = useState("sewa");
   return (
     <div>
-      <h2 className="flex items-center gap-2 text-xl">
-        <UserCog className="h-5 w-5 text-brand-600" aria-hidden />
-        Akun &amp; peran (hanya pengelola)
-      </h2>
-      <p className="text-sm text-muted-foreground">
-        Perubahan peran dan kata sandi hanya dapat dilakukan dari panel ini; hak akses selalu diperiksa ulang di server.
-      </p>
-      {pesan && <p className="mt-2 rounded-lg border border-brand-200 bg-brand-50 p-2 text-sm text-brand-800" role="status">{pesan}</p>}
-      <ul className="mt-3 max-h-96 space-y-2 overflow-y-auto scroll-area-thin">
-        {items.map((u) => (
-          <li key={u.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border bg-white p-4">
-            <div>
-              <p className="font-semibold">{u.nama}</p>
-              <p className="text-xs text-muted-foreground">{u.email}</p>
-            </div>
-            <label className="flex items-center gap-2 text-sm">
-              <span className="font-semibold">Peran</span>
-              <select value={u.role} onChange={(e) => ubahPeran(u.id, e.target.value)} className="rounded-lg border border-input px-3 py-2 text-sm" aria-label={`Peran untuk ${u.nama}`}>
-                <option value="editor">editor</option>
-                <option value="verifikator">verifikator</option>
-                <option value="pengelola">pengelola</option>
-              </select>
-            </label>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-        <XCircle className="h-3.5 w-3.5 text-cta-500" aria-hidden />
-        Editor tidak dapat membuka halaman ini; percobaan ditolak 403 di server.
-      </p>
+      <h2 className="text-xl">Usaha Panti</h2>
+      <p className="text-sm text-muted-foreground">Kelola permohonan persewaan dan katalog tarif.</p>
+      <div className="mt-3 flex gap-2">
+        <button type="button" onClick={() => setSub("sewa")} className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ${sub === "sewa" ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"}`}>Antrean Sewa</button>
+        <button type="button" onClick={() => setSub("katalog")} className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ${sub === "katalog" ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"}`}>Katalog & Tarif</button>
+      </div>
+      <div className="mt-4">
+        {sub === "sewa" && <AntreanSewa />}
+        {sub === "katalog" && <PanelKatalog />}
+      </div>
+    </div>
+  );
+}
+
+/* ================= INFORMASI PANTI ================= */
+function PanelInformasiPanti() {
+  const [sub, setSub] = useState("berita");
+  return (
+    <div>
+      <h2 className="text-xl">Informasi Panti</h2>
+      <p className="text-sm text-muted-foreground">Kelola berita dan pengumuman lembaga.</p>
+      <div className="mt-3 flex gap-2">
+        <button type="button" onClick={() => setSub("berita")} className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ${sub === "berita" ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"}`}>Berita</button>
+        <button type="button" onClick={() => setSub("pengumuman")} className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ${sub === "pengumuman" ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"}`}>Pengumuman</button>
+      </div>
+      <div className="mt-4">
+        {sub === "berita" && <PanelBerita />}
+        {sub === "pengumuman" && <PanelPengumuman />}
+      </div>
     </div>
   );
 }
