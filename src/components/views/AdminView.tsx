@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { LogoMark } from "@/components/site/LogoMark";
 import { formatRupiah, formatTanggal } from "@/lib/pricing";
+import { apiFetch, apiImageUrl } from "@/lib/api";
 
 /**
  * Dashboard LKSA Danukusumo. Satu akun admin mengelola seluruh konten, donasi, persewaan, dan pengumuman.
@@ -45,7 +46,7 @@ export function AdminView({ kembali }: { kembali: () => void }) {
   const [tab, setTab] = useState("antrean-donasi");
 
   useEffect(() => {
-    fetch("/api/admin/session")
+    apiFetch("/api/admin/session")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         setSesi(d ? { nama: d.nama, role: d.role, email: d.email } : null);
@@ -84,7 +85,7 @@ export function AdminView({ kembali }: { kembali: () => void }) {
           <button
             type="button"
             onClick={async () => {
-              await fetch("/api/admin/logout", { method: "POST" });
+              await apiFetch("/api/admin/logout", { method: "POST" });
               setSesi(null);
             }}
             className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-cta-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cta-600"
@@ -137,7 +138,7 @@ function FormulirLogin({ padaSukses, kembali }: { padaSukses: (s: Sesi) => void;
     setMemuat(true);
     setGalat("");
     try {
-      const res = await fetch("/api/admin/login", {
+      const res = await apiFetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -200,7 +201,7 @@ function AntreanDonasi() {
 
   useEffect(() => {
     let aktif = true;
-    fetch("/api/admin/donations")
+    apiFetch("/api/admin/donations")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => {
         if (aktif) setItems(d.items ?? []);
@@ -273,7 +274,7 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
   const [buktiAda, setBuktiAda] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch(`/api/admin/receipts/${donasi.receiptKey}`)
+    apiFetch(`/api/admin/receipts/${donasi.receiptKey}`)
       .then((r) => setBuktiAda(r.ok))
       .catch(() => setBuktiAda(false));
   }, [donasi.receiptKey]);
@@ -316,7 +317,7 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
             <button
               type="button"
               onClick={() => {
-                fetch(`/api/admin/receipts/${donasi.receiptKey}`)
+                apiFetch(`/api/admin/receipts/${donasi.receiptKey}`)
                   .then((r) => setBuktiAda(r.ok))
                   .catch(() => setBuktiAda(false));
               }}
@@ -327,7 +328,7 @@ function DetailDonasi({ donasi, tutup, padaBerubah }: { donasi: Donasi; tutup: (
           )}
           {buktiAda === false && <p className="mt-2 text-sm text-cta-700">Bukti tidak dapat dibuka atau bukan berkas gambar/PDF yang dapat ditampilkan.</p>}
           {buktiAda === true && (
-            <img src={`/api/admin/receipts/${donasi.receiptKey}`} alt={`Bukti transfer donasi ${donasi.referensi} (privat)`} className="mt-3 max-h-64 w-full rounded-lg border border-border object-contain" />
+            <img src={apiImageUrl(`/api/admin/receipts/${donasi.receiptKey}`)} alt={`Bukti transfer donasi ${donasi.referensi} (privat)`} className="mt-3 max-h-64 w-full rounded-lg border border-border object-contain" />
           )}
         </div>
       </div>
@@ -343,7 +344,7 @@ function AntreanSewa() {
 
   useEffect(() => {
     let aktif = true;
-    fetch("/api/admin/rentals")
+    apiFetch("/api/admin/rentals")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => {
         if (aktif) setItems(d.items ?? []);
@@ -479,7 +480,7 @@ function PanelNotifikasi() {
     const p = new URLSearchParams();
     if (jenis) p.set("jenis", jenis);
     if (hanyaBelum) p.set("unread", "1");
-    fetch(`/api/admin/notifications?${p.toString()}`)
+    apiFetch(`/api/admin/notifications?${p.toString()}`)
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => {
         if (aktif) setItems(d.items ?? []);
@@ -495,13 +496,13 @@ function PanelNotifikasi() {
   const muatData = () => setVersi((v) => v + 1);
 
   const tandaiDibaca = async (id: string) => {
-    await fetch(`/api/admin/notifications/${id}/read`, { method: "POST" });
+    await apiFetch(`/api/admin/notifications/${id}/read`, { method: "POST" });
     muatData();
   };
 
   const kirimUlang = async (id: string, deliveryId: string) => {
     setPesan("");
-    const res = await fetch(`/api/admin/notifications/${id}/resend`, {
+    const res = await apiFetch(`/api/admin/notifications/${id}/resend`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ deliveryId }),
@@ -591,7 +592,7 @@ function PanelBerita() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await apiFetch("/api/admin/upload", { method: "POST", body: fd });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
       setUnggahan(d);
@@ -605,7 +606,7 @@ function PanelBerita() {
   };
 
   const muatData = useCallback(() => {
-    fetch("/api/admin/articles")
+    apiFetch("/api/admin/articles")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => setItems(d.items ?? []))
       .catch(() => setItems([]));
@@ -616,7 +617,7 @@ function PanelBerita() {
     e.preventDefault();
     setMemuat(true);
     setGalat("");
-    const res = await fetch("/api/admin/articles", {
+    const res = await apiFetch("/api/admin/articles", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -635,7 +636,7 @@ function PanelBerita() {
   const ubahStatus = async (id: string, status: string) => {
     setPesan("");
     setGalat("");
-    const res = await fetch(`/api/admin/articles/${id}`, {
+    const res = await apiFetch(`/api/admin/articles/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -735,7 +736,7 @@ function PanelPengumuman() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await apiFetch("/api/admin/upload", { method: "POST", body: fd });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
       setUnggahan(d);
@@ -749,7 +750,7 @@ function PanelPengumuman() {
   };
 
   const muatData = useCallback(() => {
-    fetch("/api/admin/announcements")
+    apiFetch("/api/admin/announcements")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => setItems(d.items ?? []))
       .catch(() => setItems([]));
@@ -759,7 +760,7 @@ function PanelPengumuman() {
   const simpan = async (e: React.FormEvent) => {
     e.preventDefault();
     setPesan(""); setGalat("");
-    const res = await fetch("/api/admin/announcements", {
+    const res = await apiFetch("/api/admin/announcements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -772,7 +773,7 @@ function PanelPengumuman() {
   };
 
   const ubahStatus = async (id: string, status: string) => {
-    await fetch(`/api/admin/announcements/${id}`, {
+    await apiFetch(`/api/admin/announcements/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -874,7 +875,7 @@ function PanelStatistik() {
 
   const simpan = async () => {
     setPesan(""); setGalat("");
-    const res = await fetch("/api/admin/stats", {
+    const res = await apiFetch("/api/admin/stats", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ periode, sumber, usiaAgregat: usia, pendidikanAgregat: pendidikan }),
@@ -946,7 +947,7 @@ function PanelPengasuh() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await apiFetch("/api/admin/upload", { method: "POST", body: fd });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
       setUnggahan(d);
@@ -958,7 +959,7 @@ function PanelPengasuh() {
   };
 
   const muatData = useCallback(() => {
-    fetch("/api/admin/staff")
+    apiFetch("/api/admin/staff")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => setItems(d.items ?? []))
       .catch(() => setItems([]));
@@ -969,7 +970,7 @@ function PanelPengasuh() {
     e.preventDefault();
     const body: any = { nama, peran };
     if (unggahan) body.foto = unggahan.url;
-    const res = await fetch("/api/admin/staff", {
+    const res = await apiFetch("/api/admin/staff", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -978,7 +979,7 @@ function PanelPengasuh() {
   };
 
   const ubah = async (id: string, status?: string) => {
-    await fetch("/api/admin/staff", {
+    await apiFetch("/api/admin/staff", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, status }),
@@ -1046,11 +1047,11 @@ function PanelKatalog() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await apiFetch("/api/admin/upload", { method: "POST", body: fd });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error ?? "Gagal mengunggah");
       setUnggahanFile(d);
-      await fetch(`/api/admin/rental-items`, {
+      await apiFetch(`/api/admin/rental-items`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, foto: d.url }),
@@ -1067,7 +1068,7 @@ function PanelKatalog() {
   };
 
   const muatData = useCallback(() => {
-    fetch("/api/admin/rental-items")
+    apiFetch("/api/admin/rental-items")
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => setItems(d.items ?? []))
       .catch(() => setItems([]));
@@ -1075,7 +1076,7 @@ function PanelKatalog() {
   useEffect(() => { muatData(); }, [muatData]);
 
   const simpanTarif = async (id: string, tarifContoh: number) => {
-    const res = await fetch("/api/admin/rental-items", {
+    const res = await apiFetch("/api/admin/rental-items", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, tarifContoh }),
@@ -1084,7 +1085,7 @@ function PanelKatalog() {
     muatData();
   };
   const ubahStatus = async (id: string, status: string, tarifContoh: number) => {
-    await fetch("/api/admin/rental-items", {
+    await apiFetch("/api/admin/rental-items", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, tarifContoh, status }),

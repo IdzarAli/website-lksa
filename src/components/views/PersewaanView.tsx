@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Armchair, CalendarDays, Info, MapPin, TentTree, Warehouse, TriangleAlert, Users2 } from "lucide-react";
 import { formatRupiah, hitungEstimasi, jumlahHariInklusif, HasilEstimasi } from "@/lib/pricing";
+import { apiFetch, apiImageUrl } from "@/lib/api";
 
 /**
  * Usaha Panti (PRD-015, INV-2):
@@ -63,7 +64,7 @@ export function PersewaanView() {
   const refs: Record<string, HTMLElement | null> = {};
 
   useEffect(() => {
-    fetch("/api/rental-items")
+    apiFetch("/api/rental-items")
       .then((r) => r.json())
       .then((d) => setItems(d.items ?? []))
       .catch(() => setItems([]));
@@ -148,7 +149,7 @@ export function PersewaanView() {
 
     setKeadaan("memuat");
     try {
-      const res = await fetch("/api/rental-requests", {
+      const res = await apiFetch("/api/rental-requests", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Idempotency-Key": idemKey.current },
         body: JSON.stringify({

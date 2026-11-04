@@ -6,6 +6,7 @@ import {
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { GraduationCap, HeartPulse, Users } from "lucide-react";
+import { apiFetch, apiImageUrl } from "@/lib/api";
 
 /**
  * Pengurus Panti — halaman data agregat lembaga (PRD-013).
@@ -28,11 +29,11 @@ export function DataPantiView() {
   const [staff, setStaff] = useState<StaffItem[]>([]);
 
   useEffect(() => {
-    fetch("/api/institution-stats")
+    apiFetch("/api/institution-stats")
       .then((r) => r.json())
       .then((d) => setStats(d.item))
       .catch(() => setStats(null));
-    fetch("/api/staff")
+    apiFetch("/api/staff")
       .then((r) => r.json())
       .then((d) => setStaff(d.items ?? []))
       .catch(() => setStaff([]));

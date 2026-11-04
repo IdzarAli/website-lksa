@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { CheckCircle2, FileText, HeartHandshake, Info, Landmark, TriangleAlert, UploadCloud } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { parseNominalRupiah, formatRupiah } from "@/lib/pricing";
+import { apiFetch, apiImageUrl } from "@/lib/api";
 
 /**
  * Donasi (PRD-014, INV-1, INV-7).
@@ -108,7 +109,7 @@ export function DonasiView() {
       fd.set("persetujuanVerifikasi", "true");
       fd.set("leaderboardConsent", leaderboard ? "true" : "false");
       fd.set("bukti", berkas as File);
-      const res = await fetch("/api/donation-confirmations", {
+      const res = await apiFetch("/api/donation-confirmations", {
         method: "POST",
         headers: { "Idempotency-Key": idemKey.current },
         body: fd,

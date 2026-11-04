@@ -10,7 +10,14 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   /* Jangan buat ulang AGENTS.md otomatis saat `next dev`. */
   agentRules: false,
-  /* Semua panggilan /api/* diteruskan ke backend (Django/Express) sehingga cookie sesi tetap same-origin. */
+  /* Static export untuk GitHub Pages */
+  output: "export",
+  /* Images: tidak ada remote image yang dioptimasi otomatis untuk static export */
+  images: {
+    unoptimized: true,
+  },
+  /* Semua panggilan /api/* diteruskan ke backend (Django/Express) sehingga cookie sesi tetap same-origin.
+     Di production (GitHub Pages), ini tidak aktif karena static export; API call harus ke absolute URL. */
   async rewrites() {
     return [
       {

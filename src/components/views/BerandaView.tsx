@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, CalendarDays, GraduationCap, HeartHandshake, Users, UsersRound } from "lucide-react";
 import { siteConfig, type NavKey } from "@/config/site";
+import { apiFetch, apiImageUrl } from "@/lib/api";
 
 /**
  * Beranda. Urutan konten: hero → statistik → profil → sambutan → berita →
@@ -43,15 +44,15 @@ export function BerandaView({
   const [staff, setStaff] = useState<StaffItem[] | null>(null);
 
   useEffect(() => {
-    fetch("/api/institution-stats")
+    apiFetch("/api/institution-stats")
       .then((r) => r.json())
       .then((d) => setStats(d.item))
       .catch(() => setStats(null));
-    fetch("/api/articles?page=1")
+    apiFetch("/api/articles?page=1")
       .then((r) => r.json())
       .then((d) => setBerita((d.items ?? []).slice(0, 3)))
       .catch(() => setBerita([]));
-    fetch("/api/staff")
+    apiFetch("/api/staff")
       .then((r) => r.json())
       .then((d) => setStaff(d.items ?? []))
       .catch(() => setStaff(null));

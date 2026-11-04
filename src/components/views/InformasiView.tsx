@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Megaphone, Search, XCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { apiFetch, apiImageUrl } from "@/lib/api";
 
 /**
  * Informasi & Publikasi (PRD-012) + Detail berita (PRD-016).
@@ -69,7 +70,7 @@ export function InformasiView({
     const params = new URLSearchParams({ page: String(halaman) });
     if (q) params.set("q", q);
     if (tahun) params.set("year", tahun);
-    fetch(`/api/articles?${params.toString()}`)
+    apiFetch(`/api/articles?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {
         if (aktif) {
@@ -88,7 +89,7 @@ export function InformasiView({
   // muat pengumuman sekali
   useEffect(() => {
     let aktif = true;
-    fetch("/api/announcements")
+    apiFetch("/api/announcements")
       .then((r) => r.json())
       .then((d) => {
         if (aktif) setPengumuman(d.items ?? []);
@@ -105,7 +106,7 @@ export function InformasiView({
   useEffect(() => {
     if (!slug) return;
     let aktif = true;
-    fetch(`/api/articles/${encodeURIComponent(slug)}`)
+    apiFetch(`/api/articles/${encodeURIComponent(slug)}`)
       .then(async (r) => {
         if (!r.ok) throw new Error("404");
         return r.json();

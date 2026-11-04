@@ -140,7 +140,31 @@ Variabel utama di `.env`:
 
 ## Deployment
 
-### Frontend
+### GitHub Pages (Recommended)
+
+Proyek ini sudah dikonfigurasi untuk deploy ke GitHub Pages dengan static export.
+
+1. Push kode ke GitHub
+2. Buka Repository Settings → Pages
+3. Source: pilih "GitHub Actions"
+4. Custom domain: isi `paymdanukusumo.or.id`
+5. Centang "Enforce HTTPS"
+
+**Konfigurasi DNS** (di panel domain Anda):
+
+| Type | Host | Value |
+|------|------|-------|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+
+Tunggu propagasi DNS (1-24 jam), lalu verifikasi dengan:
+```bash
+nslookup paymdanukusumo.or.id
+```
+
+### Frontend (Alternatif)
 Deploy ke Vercel, Netlify, atau hosting statis lainnya.
 
 ### Backend
@@ -161,3 +185,4 @@ Deploy ke Railway, Render, atau platform Node.js lainnya dengan PostgreSQL terpi
 - **Express tidak bisa connect:** pastikan `npm run setup` sudah dijalankan dan `backend/.env` sudah dikonfigurasi.
 - **Data ingin direset:** hentikan server, lalu jalankan `npm run seed:reset`.
 - **Build error:** jalankan `npm run lint` untuk cek error sebelum build.
+- **DNS Error (GitHub Pages):** Pastikan A records sudah dikonfigurasi di panel domain. Lihat `DEPLOY_GITHUB_PAGES.md` untuk panduan lengkap.
