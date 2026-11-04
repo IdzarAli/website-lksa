@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const DJANGO_API_URL = process.env.DJANGO_API_URL ?? "http://127.0.0.1:8000";
+const BACKEND_API_URL = process.env.BACKEND_API_URL || process.env.DJANGO_API_URL || "http://127.0.0.1:8000";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
@@ -10,12 +10,12 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   /* Jangan buat ulang AGENTS.md otomatis saat `next dev`. */
   agentRules: false,
-  /* Semua panggilan /api/* diteruskan ke Django sehingga cookie sesi tetap same-origin. */
+  /* Semua panggilan /api/* diteruskan ke backend (Django/Express) sehingga cookie sesi tetap same-origin. */
   async rewrites() {
     return [
       {
         source: "/api/:path*",
-        destination: `${DJANGO_API_URL}/api/:path*`,
+        destination: `${BACKEND_API_URL}/api/:path*`,
       },
     ];
   },

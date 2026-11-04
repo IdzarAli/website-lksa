@@ -99,7 +99,7 @@ export function SiteFooter({ pindah }: { pindah: (tujuan: NavKey) => void }) {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-gray-400 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-gray-400 sm:px-6">
           © {new Date().getFullYear()} {siteConfig.copyright}
         </div>
       </div>

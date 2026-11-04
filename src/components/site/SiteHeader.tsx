@@ -40,19 +40,19 @@ export function SiteHeader({
         berscroll ? "shadow-md" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-1.5 sm:px-6 sm:py-2">
         <button
           type="button"
           onClick={() => pindah("beranda")}
-          className="flex items-center gap-2 rounded-md text-left"
+          className="flex items-center gap-1.5 rounded-md text-left"
           aria-label={`${siteConfig.namaLembaga} — kembali ke Beranda`}
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white p-1">
-            <LogoMark className="h-7 w-7" />
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white p-0.5 sm:h-8 sm:w-8 sm:p-1">
+            <LogoMark className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
           </span>
           <span className="hidden sm:block">
-            <span className="block font-display text-sm leading-tight text-white">{siteConfig.namaLembaga}</span>
-            <span className="block text-[11px] text-brand-100">{siteConfig.lokasi}</span>
+            <span className="block font-display text-xs leading-tight text-white sm:text-sm">{siteConfig.namaLembaga}</span>
+            <span className="block text-[10px] text-brand-100 sm:text-[11px]">{siteConfig.lokasi}</span>
           </span>
         </button>
 
@@ -67,7 +67,7 @@ export function SiteHeader({
                 type="button"
                 onClick={() => pindah(item.key)}
                 aria-current={aktifItem ? "page" : undefined}
-                className={`inline-flex min-h-[32px] shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-2 py-1.5 text-[11px] font-semibold transition-colors sm:min-h-[36px] sm:gap-1.5 sm:px-2.5 sm:py-2 sm:text-xs md:text-sm ${
+                className={`inline-flex min-h-[28px] shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1.5 py-1 text-[10px] font-semibold transition-colors sm:min-h-[32px] sm:gap-1 sm:px-2 sm:py-1.5 sm:text-[11px] md:text-xs ${
                   aktifItem
                     ? donasi
                       ? "bg-white text-brand-700"
@@ -77,8 +77,8 @@ export function SiteHeader({
                       : "text-brand-100 hover:bg-brand-500 hover:text-white"
                 }`}
               >
-                {donasi && <HeartHandshake className="h-3 w-3 shrink-0" aria-hidden />}
-                {Ikon && !donasi && <Ikon className="h-3 w-3 shrink-0" aria-hidden />}
+                {donasi && <HeartHandshake className="h-2.5 w-2.5 shrink-0" aria-hidden />}
+                {Ikon && !donasi && <Ikon className="h-2.5 w-2.5 shrink-0 sm:h-3 sm:w-3" aria-hidden />}
                 {item.label}
               </button>
             );
